@@ -7,3 +7,5 @@ This is the BanCode back-end API project.
 - [Lucas M. Bosquetti](https://github.com/luk-jedi) <<lucas.zet@hotmail.com>>
 - [Vinicius M. Ribeiro](https://github.com/vinicius-m9) <<viniciusmachadoribeiro@hotmail.com>>
 - [matheus H. soares](https://github.com/Narval1) <<matheushsm71@gmail.com>>
+
+### made with love S2
