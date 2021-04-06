@@ -44,7 +44,7 @@ export const updateUser = async (req, res) =>{
 
   if (update.email) emailValidation(update.email)
 
-  user.UpdatedAt = new Date().toString()
+  user.updatedAt = new Date().toString()
   await user.save()
 
   await UserService.updateUser(id, update)
@@ -59,4 +59,12 @@ export const deleteUser = async (req, res) => {
 
   await UserService.deleteUser(id)
   res.send('User delete successful!')
+}
+
+export default {
+  getAllUsers,
+  getUser,
+  createUser,
+  updateUser,
+  deleteUser
 }
