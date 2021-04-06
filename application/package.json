@@ -1,0 +1,50 @@
+{
+  "name": "bancode-api",
+  "version": "1.0.0",
+  "description": "BanCode Back-End API",
+  "main": "src/index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "clean": "rm -rf build/",
+    "build": "babel src -d build",
+    "start": "npm run clean && npm run build && node build/index.js",
+    "dev": "nodemon --exec babel-node src/index.js",
+    "test": "jest",
+    "standard:fix": "standard --fix",
+    "jscpd": "jscpd --gitignore src/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pedroafabri/bancode.git"
+  },
+  "keywords": [
+    "bank",
+    "learning",
+    "code"
+  ],
+  "author": "Pedro Fabri, Gabriel Veiga, Lucas Bosquetti, Matheus Soares, Vinicius Ribeiro",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pedroafabri/bancode/issues"
+  },
+  "homepage": "https://github.com/pedroafabri/bancode#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.13.14",
+    "@babel/core": "^7.13.14",
+    "@babel/node": "^7.13.13",
+    "@babel/preset-env": "^7.13.12",
+    "dotenv": "^8.2.0",
+    "jscpd": "^3.3.25",
+    "nodemon": "^2.0.7",
+    "standardjs": "^1.0.0-alpha"
+  },
+  "dependencies": {
+    "core-js": "^3.10.0",
+    "mongoose": "^5.12.3",
+    "regenerator-runtime": "^0.13.7",
+    "restify": "^8.5.1",
+    "restify-errors": "^8.0.2"
+  }
+}
