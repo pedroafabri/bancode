@@ -6,3 +6,5 @@ This is the BanCode back-end API project.
 - [Gabriel R. Veiga](https://github.com/VeigaCoder) <<gbrl316@gmail.com>>
 - [Lucas M. Bosquetti](https://github.com/luk-jedi) <<lucas.zet@hotmail.com>>
 - [Vinicius M. Ribeiro](https://github.com/vinicius-m9) <<viniciusmachadoribeiro@hotmail.com>>
+
+# made with love s2
