@@ -1,4 +1,4 @@
-import UserController from './service'
+import UserController from './controller'
 
 export const BASE_ROUTE = '/users'
 
@@ -11,7 +11,7 @@ export const initialize = (server) => {
 
   server.put(`${BASE_ROUTE}/:id`, UserController.updateUser)
 
-  server.delete(`${BASE_ROUTE}/:id`, UserController.deleteUser)
+  server.del(`${BASE_ROUTE}/:id`, UserController.deleteUser)
 }
 
 export default {

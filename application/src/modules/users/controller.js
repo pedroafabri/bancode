@@ -2,7 +2,7 @@ import UserService from './service'
 
 const emailValidation = email => {
   const emailRegex = /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
-  const validEmail = emailRegex.test(user.email)
+  const validEmail = emailRegex.test(email)
 
   if (!validEmail) return res.status(400).send('Invalid email!')
 }
@@ -12,7 +12,7 @@ const userValidation = user => {
 }
 
 export const getAllUsers = async (req, res) => {
-  const users = await UserService.getAllUsers
+  const users = await UserService.getAllUsers()
 
   res.json(users)
 }

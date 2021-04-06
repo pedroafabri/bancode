@@ -18,18 +18,18 @@ const userSchema = mongoose.Schema({
   email: String,
   cpf: String,
   verified: {
-    Boolean,
+    type: Boolean,
     default: false
   },
   password: String,
   balance: Number,
   operations: [Operation],
   createdAt: {
-    Date,
+    type: Date,
     default: new Date().toString()
   },
   updatedAt: {
-    Date,
+    type: Date,
     default: new Date().toString()
   },
   deletedAt: Date
