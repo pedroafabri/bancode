@@ -3,11 +3,11 @@ import 'regenerator-runtime/runtime'
 import Server from './server'
 import Database from './database'
 
-const env = process.env.NODE_ENV
+var env = process.env.NODE_ENV
 
 // If not production or staging, configure .env
 if (env !== 'production' && env !== 'staging') {
-  require('dotenv').config()
+  require('dotenv').config();
 }
 
 const run = async () => {
