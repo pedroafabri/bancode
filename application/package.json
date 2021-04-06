@@ -12,7 +12,7 @@
     "start": "npm run clean && npm run build && node build/index.js",
     "dev": "nodemon --exec babel-node src/index.js",
     "test": "jest",
-    "standard:fix": "standard --fix",
+    "standard:fix": "standard --fix | snazzy",
     "jscpd": "jscpd --gitignore src/"
   },
   "repository": {
@@ -38,6 +38,7 @@
     "dotenv": "^8.2.0",
     "jscpd": "^3.3.25",
     "nodemon": "^2.0.7",
+    "snazzy": "^9.0.0",
     "standardjs": "^1.0.0-alpha"
   },
   "dependencies": {
