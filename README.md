@@ -2,4 +2,4 @@
 This is the BanCode back-end API project.
 
 # Creators
-- Pedro A. Fabri <<pedroafabri@gmail.com>>
+- [Pedro A. Fabri](https://github.com/pedroafabri) <<pedroafabri@gmail.com>>
