@@ -4,7 +4,8 @@ import mongoose from 'mongoose'
 // Creates an operation model wich will store OPERATIONS TYPES, AMOUNT and DATE
 const Operation = mongoose.Schema({
   operationType: {
-    String, enum: ['deposit', 'withdrawal']
+    String,
+    enum: ['deposit', 'withdrawal']
   },
   amount: Number,
   date: Date
@@ -16,16 +17,19 @@ const userSchema = mongoose.Schema({
   lastName: String,
   email: String,
   cpf: String,
-  verified: Boolean,
+  verified: {
+    Boolean,
+    default: false
+  },
   password: String,
   balance: Number,
   operations: [Operation],
   createdAt: {
-    type: Date,
+    Date,
     default: new Date().toString()
   },
   updatedAt: {
-    type: Date,
+    Date,
     default: new Date().toString()
   },
   deletedAt: Date
