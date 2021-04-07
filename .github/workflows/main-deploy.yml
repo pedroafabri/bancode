@@ -22,7 +22,7 @@ jobs:
       - name: Create Procfile
         run: echo $PROCFILE_CONTENT > application/Procfile
       - name: Install heroku CLI
-        run: npm install -g heroku
+        run: npm install heroku
       - name: Deploy to heroku
         env: 
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
