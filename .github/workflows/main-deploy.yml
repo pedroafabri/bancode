@@ -20,7 +20,7 @@ jobs:
       - name: Remove src folder after build
         run: rm -rf application/src/
       - name: Create Procfile
-        run: echo 'web: node build/index.js' > application/Procfile
+        run: echo $PROCFILE_CONTENT > application/Procfile
       - name: Install heroku CLI
         run: npm install -g heroku
       - name: Deploy to heroku
