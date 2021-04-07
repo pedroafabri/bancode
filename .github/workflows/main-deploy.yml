@@ -23,9 +23,11 @@ jobs:
         run: echo $PROCFILE_CONTENT > application/Procfile
       - name: Install heroku CLI
         run: npm install heroku
+      - name: Create ssh key
+        run: echo $HEROKU_SSH_KEY > ~/.ssh/id_rsa
       - name: Deploy to heroku
         env: 
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
-          heroku git:remote -a bancode-api
+          heroku git:remote -a bancode-api --ssh-git
           git subtree push --prefix application heroku master
