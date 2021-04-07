@@ -5,7 +5,10 @@ import UserModel from './model'
 export const getAllUsers = () => UserModel.find({})
 
 // Get user by id
-export const getUser = id => UserModel.findById(id)
+export const getUserById = id => UserModel.findById(id)
+
+// Get user by email
+export const getUserByEmail = email => UserModel.findOne({ email: email })
 
 // Create new user
 export const createUser = user => UserModel.create(user)
@@ -18,7 +21,8 @@ export const deleteUser = id => UserModel.updateOne({ _id: id }, { deletedAt: ne
 
 export default {
   getAllUsers,
-  getUser,
+  getUserById,
+  getUserByEmail,
   createUser,
   updateUser,
   deleteUser

@@ -14,7 +14,7 @@ export const getAllUsers = async (req, res) => {
 // GET user JSON by id
 export const getUser = async (req, res) => {
   const { id } = req.params
-  const user = await UserService.getUser(id)
+  const user = await UserService.getUserById(id)
 
   if (!user) return res.send(404, 'User not found!')
 
@@ -29,6 +29,11 @@ export const createUser = async (req, res) => {
   const validEmail = emailCheck.validation(user.email)
 
   if (!validEmail) return res.send(400, 'Invalid email!')
+
+  // Check if user e-mail already exists
+  const email = await UserService.getUserByEmail(user.email)
+
+  if (email) return res.send(400, 'Email already exists!')
 
   // Check if user CPF is valid
   const validCpf = cpfCheck.validation(user.cpf)
@@ -47,7 +52,7 @@ export const createUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   // Get user by id
   const { id } = req.params
-  const user = await UserService.getUser(id)
+  const user = await UserService.getUserById(id)
   const update = req.body
 
   // Checks if e-mail was updated and if it's valid
@@ -78,7 +83,7 @@ export const updateUser = async (req, res) => {
 // Deletes an user
 export const deleteUser = async (req, res) => {
   const { id } = req.params
-  const user = await UserService.getUser(id)
+  const user = await UserService.getUserById(id)
 
   if (!user) return res.send(404, 'User not found!')
   // Display message once user is deleted
