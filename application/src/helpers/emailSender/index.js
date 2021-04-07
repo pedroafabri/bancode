@@ -8,7 +8,7 @@ export const sendWelcomeEmail = (userInformations) => {
     from: process.env.EMAIL_SENDER,
     subject: 'sending a email test',
     text: 'test message',
-    html: `<strong>seja bem vindo ${userInformations.name} ao bancode, estamos honrados em recebe-lo</strong>`
+    html: `<strong>seja bem vindo ${userInformations.firstName} ${userInformations.lastName} ao bancode, estamos honrados em recebe-lo</strong>`
   }
 
   const emailSender = async () => {
