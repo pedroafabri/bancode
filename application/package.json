@@ -10,7 +10,7 @@
     "clean": "rm -rf build/",
     "build": "babel src -d build",
     "start": "npm run clean && npm run build && node build/index.js",
-    "dev": "nodemon --exec babel-node src/index.js",
+    "dev": "nodemon --exec node_modules/.bin/babel-node src/index.js",
     "test": "jest",
     "standard:fix": "standard --fix | snazzy",
     "jscpd": "jscpd --gitignore src/"
@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "core-js": "^3.10.0",
+    "cpf-check": "^3.0.0",
     "mongoose": "^5.12.3",
     "regenerator-runtime": "^0.13.7",
     "restify": "^8.5.1",
