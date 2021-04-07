@@ -1,4 +1,5 @@
 import UserService from './service'
+import { creatMsg } from '../../helpers/index'
 
 const emailValidation = email => {
   const emailRegex = /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
@@ -18,7 +19,7 @@ export const getAllUsers = async (req, res) => {
 }
 
 export const getUser = async (req, res) => {
-  const { id } = res.params
+  const { id } = req.params
   const user = await UserService.getUser(id)
 
   userValidation(user)
@@ -30,9 +31,13 @@ export const createUser = async (req, res) => {
   const user = req.body
 
   emailValidation(user.email)
-
   await UserService.createUser(user)
+  const useremail = user.email
+  const nameuser = `${user.firstName} ${user.lastName}`
+  console.log(useremail, nameuser)
+  await creatMsg(useremail, nameuser)
   res.send('User create successful!')
+  
 }
 
 export const updateUser = async (req, res) =>{
