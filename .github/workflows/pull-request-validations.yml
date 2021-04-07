@@ -10,14 +10,46 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      
       - name: Setup Node.js environment
         uses: actions/setup-node@v2.1.5
-        
       - name: Install dependencies
         run: cd application/ && npm install
-        
       - name: Build application
         run: cd application/ && npm run clean && npm run build
+        
+  copy-paste-detection:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.5
+      - name: Install dependencies
+        run: cd application/ && npm install
+      - name: Run copy-paste detection
+        run: cd application/ && npm run jscpd
+
+  standard-js:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.5
+      - name: Install dependencies
+        run: cd application/ && npm install
+      - name: Check for StandardJS code
+        run: cd application/ && npm run standard
+
+  test:
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.5
+      - name: Install dependencies
+        run: cd application/ && npm install
+      - name: Run tests
+        run: cd application/ && npm run test

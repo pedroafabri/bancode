@@ -55,6 +55,7 @@ All the commands below are available to be used as pleased.
 | start        | Calls clean, build and then starts the server located at *build/* folder                                     | npm start            |
 | dev          | Runs the server with nodemon in development mode.                                                            | npm run dev          |
 | test         | Runs jest to execute all test files                                                                          | npm run test         |
+| standard     | Checks if the code meets [StandardJS](https://standardjs.com/) requirements.                                 | npm run standard     |
 | standard:fix | Checks if the code meets [StandardJS](https://standardjs.com/) requirements and auto-fix some of the errors. | npm run standard:fix |
 | jscpd        | Checks the *src/* folder for copy-pasted code.                                                               | npm run jscpd        |
 

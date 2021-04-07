@@ -12,6 +12,7 @@
     "start": "npm run clean && npm run build && node build/index.js",
     "dev": "nodemon --exec babel-node src/index.js",
     "test": "jest",
+    "standard": "standard 'src/**/*.js' | snazzy",
     "standard:fix": "standard --fix | snazzy",
     "jscpd": "jscpd --gitignore src/"
   },
