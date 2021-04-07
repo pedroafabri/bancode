@@ -1,5 +1,6 @@
 import UserService from './service'
 import cpfCheck from '../../helpers/cpf-validator'
+import { encrypt } from '../../helpers/encrypt-pass'
 
 export const getAllUsers = async (req, res) => {
   const users = await UserService.getAllUsers()
@@ -27,6 +28,8 @@ export const createUser = async (req, res) => {
   const validCpf = cpfCheck.validation(user.cpf)
 
   if (!validCpf) return res.send(400, 'Invalid CPF!')
+
+  user.password = encrypt(user.password)
 
   await UserService.createUser(user)
   res.send('User created successfully!')
