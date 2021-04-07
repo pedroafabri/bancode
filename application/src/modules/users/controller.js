@@ -1,13 +1,17 @@
+// Requirements from service and npm packages
 import UserService from './service'
 import cpfCheck from '../../helpers/cpf-validator'
+import emailCheck from '../../helpers/email-validator'
 import { encrypt } from '../../helpers/encrypt-pass'
 
+// GET all users JSON
 export const getAllUsers = async (req, res) => {
   const users = await UserService.getAllUsers()
 
   res.json(users)
 }
 
+// GET user JSON by id
 export const getUser = async (req, res) => {
   const { id } = req.params
   const user = await UserService.getUser(id)
@@ -17,57 +21,67 @@ export const getUser = async (req, res) => {
   res.json(user)
 }
 
+// Creates an user
 export const createUser = async (req, res) => {
   const user = req.body
 
-  const emailRegex = /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
-  const validEmail = emailRegex.test(user.email)
+  // Check if user e-mail is valid
+  const validEmail = emailCheck.validation(user.email)
 
   if (!validEmail) return res.send(400, 'Invalid email!')
 
+  // Check if user CPF is valid
   const validCpf = cpfCheck.validation(user.cpf)
 
   if (!validCpf) return res.send(400, 'Invalid CPF!')
 
+  // Encrypt user password
   user.password = encrypt(user.password)
 
+  // Display message once user is created
   await UserService.createUser(user)
   res.send('User created successfully!')
 }
 
+// Updates an user
 export const updateUser = async (req, res) => {
+  // Get user by id
   const { id } = req.params
   const user = await UserService.getUser(id)
   const update = req.body
 
+  // Checks if e-mail was updated and if it's valid
   if (update.email) {
-    const emailRegex = /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
-    const validEmail = emailRegex.test(update.email)
+    const validEmail = emailCheck.validation(update.email)
 
     if (!validEmail) return res.send(400, 'Invalid email!')
   }
 
+  // Checks if CPF was updated and if it's valid
   if (update.cpf) {
     const validCpf = cpfCheck.validation(update.cpf)
 
     if (!validCpf) return res.send(400, 'Invalid CPF!')
   }
 
+  // Checks if password was updated and if it's valid
   if (update.password) update.password = encrypt(update.password)
 
+  // Changes updated at and save
   user.updatedAt = new Date().toString()
   await user.save()
-
+  // Display message once user is updated
   await UserService.updateUser(id, update)
   res.send('User updated successfully!')
 }
 
+// Deletes an user
 export const deleteUser = async (req, res) => {
   const { id } = req.params
   const user = await UserService.getUser(id)
 
   if (!user) return res.send(404, 'User not found!')
-
+  // Display message once user is deleted
   await UserService.deleteUser(id)
   res.send('User deleted successfully!')
 }

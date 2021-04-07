@@ -1,7 +1,7 @@
 // Requires 'mongoose'
 import mongoose from 'mongoose'
 
-// Creates an operation model wich will store OPERATIONS TYPES, AMOUNT and DATE
+// Creates an operation model wich will store OPERATIONS TYPES, AMOUNT and OPERATION DATE
 const Operation = mongoose.Schema({
   operationType: {
     String,
@@ -11,7 +11,7 @@ const Operation = mongoose.Schema({
   date: Date
 })
 
-// Creates the user model wich will store users basics informations including its operations and account balance
+// Creates the user model wich will store users informations
 const userSchema = mongoose.Schema({
   firstName: String,
   lastName: String,
