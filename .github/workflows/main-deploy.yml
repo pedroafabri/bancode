@@ -20,11 +20,15 @@ jobs:
       - name: Remove src folder after build
         run: rm -rf application/src/
       - name: Create Procfile
-        run: echo $PROCFILE_CONTENT > application/Procfile
+        run: echo ${{ secrets.PROCFILE_CONTENT }} > application/Procfile
       - name: Install heroku CLI
         run: npm install heroku
-      - name: Create ssh key
-        run: echo $HEROKU_SSH_KEY > ~/.ssh/id_rsa
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.HEROKU_SSH_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+          if_key_exists: ignore
       - name: Deploy to heroku
         env: 
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
