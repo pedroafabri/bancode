@@ -1,0 +1,32 @@
+name: main-deploy
+ 
+on:
+  push:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.5
+      - name: Install dependencies
+        run: cd application/ && npm install
+      - name: Build application
+        run: cd application/ && npm run clean && npm run build
+      - name: Remove src folder after build
+        run: rm -rf application/src/
+      - name: Create Procfile
+        run: echo 'web: node build/index.js' > application/Procfile
+      - name: Install heroku CLI
+        run: npm install -g heroku
+      - name: Deploy to heroku
+        env: 
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          heroku login
+          heroku git:remote -a bancode-api
+          git subtree push --prefix application heroku master
