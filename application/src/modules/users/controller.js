@@ -23,10 +23,8 @@ export const getUser = async (req, res) => {
 export const createUser = async (req, res) => {
   const user = req.body
 
-  emailValidation(user.email)
-
   await UserService.createUser(user)
-  res.send('User create successful!')
+  res.send('User created successfully!')
 }
 
 export const updateUser = async (req, res) => {
@@ -40,17 +38,15 @@ export const updateUser = async (req, res) => {
   await user.save()
 
   await UserService.updateUser(id, update)
-  res.send('User update successful!')
+  res.send('User updated successfully!')
 }
 
 export const deleteUser = async (req, res) => {
   const { id } = req.params
   const user = await UserService.getUser(id)
 
-  userValidation(user)
-
   await UserService.deleteUser(id)
-  res.send('User delete successful!')
+  res.send('User deleted successfully!')
 }
 
 export default {
