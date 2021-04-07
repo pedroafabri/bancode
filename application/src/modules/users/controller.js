@@ -47,6 +47,14 @@ export const updateUser = async (req, res) => {
     if (!validEmail) return res.send(400, 'Invalid email!')
   }
 
+  if (update.cpf) {
+    const validCpf = cpfCheck.validation(update.cpf)
+
+    if (!validCpf) return res.send(400, 'Invalid CPF!')
+  }
+
+  if (update.password) update.password = encrypt(update.password)
+
   user.updatedAt = new Date().toString()
   await user.save()
 
