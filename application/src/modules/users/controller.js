@@ -4,11 +4,7 @@ const emailValidation = email => {
   const emailRegex = /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i
   const validEmail = emailRegex.test(email)
 
-  if (!validEmail) return res.status(400).send('Invalid email!')
-}
-
-const userValidation = user => {
-  if (!user) return res.status(404).send('User not find!')
+  if (!validEmail) return res.send(400, 'Invalid email!')
 }
 
 export const getAllUsers = async (req, res) => {
@@ -18,11 +14,9 @@ export const getAllUsers = async (req, res) => {
 }
 
 export const getUser = async (req, res) => {
-  const { id } = res.params
+  const { id } = req.params
   const user = await UserService.getUser(id)
-
-  userValidation(user)
-
+  if (!user) return res.send(404, 'User not found!')
   res.json(user)
 }
 
@@ -35,12 +29,10 @@ export const createUser = async (req, res) => {
   res.send('User create successful!')
 }
 
-export const updateUser = async (req, res) =>{
+export const updateUser = async (req, res) => {
   const { id } = req.params
   const user = await UserService.getUser(id)
   const update = req.body
-  
-  userValidation(user)
 
   if (update.email) emailValidation(update.email)
 
