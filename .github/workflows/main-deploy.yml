@@ -28,7 +28,7 @@ jobs:
       - name: LS build folder
         run: ls application/build
       - name: CAT Procfile 
-        run: cat Procfile
+        run: cat application/Procfile
       # - name: Install heroku CLI
       #   run: npm install heroku
       # - name: Install SSH key
