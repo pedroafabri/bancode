@@ -2,9 +2,9 @@ import sgMail from '@sendgrid/mail'
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
-export const sendWelcomeEmail = (email, userInformations) => {
+export const sendWelcomeEmail = (userInformations) => {
   const message = {
-    to: email,
+    to: userInformations.email,
     from: process.env.EMAIL_SENDER,
     subject: 'sending a email test',
     text: 'test message',
