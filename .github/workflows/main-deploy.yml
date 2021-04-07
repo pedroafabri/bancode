@@ -27,6 +27,5 @@ jobs:
         env: 
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
-          heroku login
           heroku git:remote -a bancode-api
           git subtree push --prefix application heroku master
