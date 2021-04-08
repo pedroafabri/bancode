@@ -16,7 +16,7 @@ export const getUser = async (req, res) => {
   const { id } = req.params
   const user = await UserService.getUserById(id)
 
-  if (!user) return res.send(404, 'User not found!')
+  if (!user) return res.send(404, 'User not found.')
 
   res.json(user)
 }
@@ -28,17 +28,17 @@ export const createUser = async (req, res) => {
   // Check if user e-mail is valid
   const validEmail = emailCheck.validation(user.email)
 
-  if (!validEmail) return res.send(400, 'Invalid email!')
+  if (!validEmail) return res.send(400, 'Invalid email.')
 
   // Check if user e-mail already exists
   const email = await UserService.getUserByEmail(user.email)
 
-  if (email) return res.send(400, 'Email already exists!')
+  if (email) return res.send(400, 'Email is already in use.')
 
   // Check if user CPF is valid
   const validCpf = cpfCheck.validation(user.cpf)
 
-  if (!validCpf) return res.send(400, 'Invalid CPF!')
+  if (!validCpf) return res.send(400, 'Invalid CPF.')
 
   // Encrypt user password
   user.password = encrypt(user.password)
@@ -59,13 +59,13 @@ export const updateUser = async (req, res) => {
   if (update.email) {
     const validEmail = emailCheck.validation(update.email)
 
-    if (!validEmail) return res.send(400, 'Invalid email!')
+    if (!validEmail) return res.send(400, 'Invalid email.')
   }
 
   // Checks if CPF was updated and if it's valid
   if (update.cpf) {
     const validCpf = cpfCheck.validation(update.cpf)
-    if (!validCpf) return res.send(400, 'Invalid CPF!')
+    if (!validCpf) return res.send(400, 'Invalid CPF.')
   }
 
   // Checks if password was updated and if it's valid
@@ -90,6 +90,23 @@ export const deleteUser = async (req, res) => {
   res.send('User deleted successfully!')
 }
 
+<<<<<<< HEAD
+=======
+// Authenticates user
+export const authenticateUser = async (req, res) => {
+  const { email, password } = req.body
+  const user = await UserService.getUserByEmail(email)
+
+  if (!user) return res.send(401, 'Invalid credentials.')
+
+  const encryptedPassword = await encrypt(password)
+
+  if (encryptedPassword !== user.password) return res.send(401, 'Invalid credentials.')
+
+  res.send('Authenticated!')
+}
+
+>>>>>>> 70b7c9cd315fb2b5bd478e1cdfd735c346e2650d
 export default {
   getAllUsers,
   getUser,
