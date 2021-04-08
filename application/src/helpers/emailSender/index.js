@@ -1,28 +1,27 @@
 import sgMail from '@sendgrid/mail'
 
+// conect with the sendgrid api
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
-export const sendWelcomeEmail = (userInformations) => {
+// get the new user req.body and sent the welcome email
+export const sendWelcomeEmail = async (email, userInfo) => {
+  // sender template
   const message = {
-    to: userInformations.email,
+    to: email,
     from: process.env.EMAIL_SENDER,
     subject: 'sending a email test',
     text: 'test message',
-    html: `<strong>seja bem vindo ${userInformations.firstName} ${userInformations.lastName} ao bancode, estamos honrados em recebe-lo</strong>`
+    html: `<strong>seja bem vindo ${userInfo.firstName} ${userInfo.lastName} ao bancode, estamos honrados em recebe-lo</strong>`
   }
 
-  const emailSender = async () => {
-    await sgMail
-      .send(message)
-      .then(() => {
-        console.log('Email sent')
-      })
-      .catch((error) => {
-        console.error(error)
-      })
+  // try delivering the message, in case it goes wrong throw the  error
+  try {
+    await sgMail.send(message)
+    console.log('Email sent')
+  } catch (error) {
+    console.log(error)
+    throw error
   }
-
-  emailSender()
 }
 
 export default {
