@@ -21,25 +21,18 @@ jobs:
         run: rm -rf application/src/
       - name: Create Procfile
         run: echo ${{ secrets.PROCFILE_CONTENT }} > application/Procfile
-      - name: LS folder
-        run: ls
-      - name: LS application folder
-        run: ls application/
-      - name: LS build folder
-        run: ls application/build
-      - name: CAT Procfile 
-        run: cat application/Procfile
-      # - name: Install heroku CLI
-      #   run: npm install heroku
-      # - name: Install SSH key
-      #   uses: shimataro/ssh-key-action@v2
-      #   with:
-      #     key: ${{ secrets.HEROKU_SSH_KEY }}
-      #     known_hosts: ${{ secrets.KNOWN_HOSTS }}
-      #     if_key_exists: ignore
-      # - name: Deploy to heroku
-      #   env: 
-      #     HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-      #   run: |
-      #     heroku git:remote -a bancode-api --ssh-git
-      #     git subtree push --prefix application heroku master
+      - name: Install heroku CLI
+        run: npm install heroku
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.HEROKU_SSH_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+          if_key_exists: ignore
+      - name: Deploy to heroku
+        env: 
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          heroku git:remote -a bancode-api --ssh-git
+          git subtree split --prefix application -b deploy
+          git push heroku deploy:master
