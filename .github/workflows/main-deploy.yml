@@ -35,4 +35,4 @@ jobs:
         run: |
           heroku git:remote -a bancode-api --ssh-git
           git subtree split --prefix application -b deploy
-          git push heroku deploy:master
+          git push heroku deploy:master -f
