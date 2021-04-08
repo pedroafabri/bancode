@@ -65,7 +65,6 @@ export const updateUser = async (req, res) => {
   // Checks if CPF was updated and if it's valid
   if (update.cpf) {
     const validCpf = cpfCheck.validation(update.cpf)
-
     if (!validCpf) return res.send(400, 'Invalid CPF!')
   }
 
@@ -75,8 +74,8 @@ export const updateUser = async (req, res) => {
   // Changes updated at and save
   user.updatedAt = new Date().toString()
   await user.save()
-  // Display message once user is updated
   await UserService.updateUser(id, update)
+  // Display message once user is updated
   res.send('User updated successfully!')
 }
 
@@ -91,10 +90,24 @@ export const deleteUser = async (req, res) => {
   res.send('User deleted successfully!')
 }
 
+// Authenticates user
+export const authenticateUser = async (req, res) => {
+  const { email, password } = req.body
+  const user = await UserService.getUserByEmail(email)
+  if (!user) return res.send(420, 'Invalid credentials.')
+
+  const cryptedPassword = await encrypt(password)
+  if (cryptedPassword !== user.password) return res.send(420, 'Invalid credentials.')
+  user.verified = true
+  await user.save()
+  res.send('Authenticated.')
+}
+
 export default {
   getAllUsers,
   getUser,
   createUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  authenticateUser
 }
