@@ -15,8 +15,6 @@ export const initialize = (server) => {
   server.put(`${BASE_ROUTE}/:id`, UserController.updateUser)
 
   server.del(`${BASE_ROUTE}/:id`, UserController.deleteUser)
-
-  server.post(`${BASE_ROUTE}/authenticate`, UserController.authenticateUser)
 }
 
 export default {

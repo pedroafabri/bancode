@@ -90,25 +90,10 @@ export const deleteUser = async (req, res) => {
   res.send('User deleted successfully!')
 }
 
-// Authenticates user
-export const authenticateUser = async (req, res) => {
-  const { email, password } = req.body
-  const user = await UserService.getUserByEmail(email)
-
-  if (!user) return res.send(401, 'Invalid credentials!')
-
-  const encryptedPassword = await encrypt(password)
-
-  if (encryptedPassword !== user.password) return res.send(401, 'Invalid credentials!')
-
-  res.send('Authenticated!')
-}
-
 export default {
   getAllUsers,
   getUser,
   createUser,
   updateUser,
-  deleteUser,
-  authenticateUser
+  deleteUser
 }
