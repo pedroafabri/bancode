@@ -13,7 +13,7 @@ npm install
 The .env file must be configured followinf the .env.example file.
 You can simply copy one file into another with the command:
 ```
-cp .env.example .enc
+cp .env.example .env
 ```
 
 Below is an explanation of every config variable:
