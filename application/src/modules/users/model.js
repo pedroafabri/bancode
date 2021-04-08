@@ -13,25 +13,37 @@ const Operation = mongoose.Schema({
 
 // Creates the user model wich will store users informations
 const userSchema = mongoose.Schema({
-  firstName: String,
-  lastName: String,
-  email: String,
-  cpf: String,
+  firstName: {
+    type: String,
+    required: true
+  },
+  lastName: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true
+  },
+  cpf: {
+    type: String,
+    required: true
+  },
   verified: {
     type: Boolean,
     default: false
   },
-  password: String,
+  password: {
+    type: String,
+    required: true
+  },
   balance: Number,
   operations: [Operation],
   createdAt: {
     type: Date,
     default: new Date().toString()
   },
-  updatedAt: {
-    type: Date,
-    default: new Date().toString()
-  },
+  updatedAt: Date,
   deletedAt: Date
 })
 
