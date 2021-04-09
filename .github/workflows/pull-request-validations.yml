@@ -16,7 +16,7 @@ jobs:
       - name: Install dependencies
         run: cd application/ && npm install
       - name: Build application
-        run: cd application/ && npm run clean && npm run build
+        run: cd application/ && npm run build
         
   copy-paste-detection:
     runs-on: ubuntu-latest
