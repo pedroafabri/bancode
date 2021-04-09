@@ -5,7 +5,7 @@ import UserModel from './model'
 export const getAllUsers = () => UserModel.find({})
 
 // Get user by id
-export const getUserById = id => UserModel.findById(id)
+export const getUserById = id => UserModel.findOne({ _id: id })
 
 // Get user by email
 export const getUserByEmail = email => UserModel.findOne({ email: email })

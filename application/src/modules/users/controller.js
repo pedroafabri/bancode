@@ -1,51 +1,64 @@
 // Requirements from service and npm packages
 import UserService from './service'
-import cpfCheck from '../../helpers/cpf-validator'
-import emailCheck from '../../helpers/email-validator'
-import { encrypt } from '../../helpers/encrypt-password'
+import cpfCheck from '../../helpers/cpfValidator'
+import emailCheck from '../../helpers/emailValidator'
+import { encrypt } from '../../helpers/encryptPassword'
+import error from 'restify-errors'
 
 // GET all users JSON
 export const getAllUsers = async (req, res) => {
   const users = await UserService.getAllUsers()
-
   res.json(users)
 }
 
 // GET user JSON by id
-export const getUser = async (req, res) => {
-  const { id } = req.params
-  const user = await UserService.getUserById(id)
+export const getUser = async (req, res, next) => {
+  try {
+    const user = await UserService.getUserById(req.params.id)
 
-  if (!user) return res.send(404, 'User not found.')
+    /**
+     * BUG NO MONGOOSE QUANDO ELE TESTA UM ID COM EXATAMENTE
+     * 12 CARACTERES. MESMO O ID SENDO INVALIDO A FUNCAO findOne
+     * NAO RETORNA UM ERRO. POR ISSO PRECISAMOS DESSE IF.
+     */
+    if (!user) return next(new error.NotFoundError('User not found.'))
+  } catch (err) {
+    return next(new error.NotFoundError('User not found.'))
+  }
 
   res.json(user)
 }
 
 // Creates an user
-export const createUser = async (req, res) => {
+export const createUser = async (req, res, next) => {
+  try {
+    if (req.body === undefined) throw new Error('')
+  } catch (err) {
+    return next(new error.BadRequestError(err.message))
+  }
+
   const user = req.body
 
   // Check if user e-mail is valid
-  const validEmail = emailCheck.validation(user.email)
+  if (!emailCheck.validation(user.email)) return next(new error.BadRequestError('Invalid email.'))
 
-  if (!validEmail) return res.send(400, 'Invalid email.')
+  // Check if user CPF is valid
+  if (!cpfCheck.validation(user.cpf)) return next(new error.BadRequestError('Invalid CPF.'))
 
   // Check if user e-mail already exists
   const email = await UserService.getUserByEmail(user.email)
-
-  if (email) return res.send(400, 'Email is already in use.')
-
-  // Check if user CPF is valid
-  const validCpf = cpfCheck.validation(user.cpf)
-
-  if (!validCpf) return res.send(400, 'Invalid CPF.')
+  if (email) return next(new error.BadRequestError('Email is already in use.'))
 
   // Encrypt user password
   user.password = encrypt(user.password)
 
-  // Display message once user is created
-  await UserService.createUser(user)
-  res.send('User created successfully!')
+  try {
+    const newUser = await UserService.createUser(user)
+    // Display message once user is created
+    res.json(newUser)
+  } catch (err) {
+    return next(new error.ServiceUnavailableError(err.message))
+  }
 }
 
 // Updates an user
@@ -59,13 +72,13 @@ export const updateUser = async (req, res) => {
   if (update.email) {
     const validEmail = emailCheck.validation(update.email)
 
-    if (!validEmail) return res.send(400, 'Invalid email.')
+    if (!validEmail) return next(new error.BadRequestError('Invalid email.'))
   }
 
   // Checks if CPF was updated and if it's valid
   if (update.cpf) {
     const validCpf = cpfCheck.validation(update.cpf)
-    if (!validCpf) return res.send(400, 'Invalid CPF.')
+    if (!validCpf) return next(new error.BadRequestError('Invalid CPF.'))
   }
 
   // Checks if password was updated and if it's valid
@@ -76,18 +89,28 @@ export const updateUser = async (req, res) => {
   await user.save()
   await UserService.updateUser(id, update)
   // Display message once user is updated
-  res.send('User updated successfully!')
+  res.json(user)
 }
 
 // Deletes an user
-export const deleteUser = async (req, res) => {
-  const { id } = req.params
-  const user = await UserService.getUserById(id)
+export const deleteUser = async (req, res, next) => {
+  try {
+    const user = await UserService.getUserById(req.params.id)
 
-  if (!user) return res.send(404, 'User not found!')
+    /**
+     * BUG NO MONGOOSE QUANDO ELE TESTA UM ID COM EXATAMENTE
+     * 12 CARACTERES. MESMO O ID SENDO INVALIDO A FUNCAO findOne
+     * NAO RETORNA UM ERRO. POR ISSO PRECISAMOS DESSE IF.
+     */
+    if (!user) return next(new error.NotFoundError('User not found.'))
+  } catch (err) {
+    return next(new error.NotFoundError('User not found.'))
+  }
+
+  await UserService.deleteUser(req.params.id)
+  const deletedUser = await UserService.getUserById(req.params.id)
   // Display message once user is deleted
-  await UserService.deleteUser(id)
-  res.send('User deleted successfully!')
+  res.json(deletedUser)
 }
 
 export default {
