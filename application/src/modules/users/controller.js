@@ -18,7 +18,7 @@ export const getUser = async (req, res, next) => {
   try {
     const user = await UserService.getUserById(req.params.id)
 
-    if (!user) throw new Error('User not found.')
+    if (!user || user.deletedAt !== undefined) throw new Error('User not found.')
 
     // Display user
     res.json(UserService.displayFormat(user))
@@ -58,7 +58,7 @@ export const createUser = async (req, res, next) => {
     // Display created user
     res.json(UserService.displayFormat(createdUser))
   } catch (err) {
-    return next(new error.ServiceUnavailableError(err.message))
+    return next(new error.BadRequestError(err.message))
   }
 }
 
@@ -67,7 +67,7 @@ export const updateUser = async (req, res, next) => {
   try {
     const user = await UserService.getUserById(req.params.id)
 
-    if (!user) throw new Error('User not found.')
+    if (!user || user.deletedAt !== undefined) throw new Error('User not found.')
   } catch (err) {
     return next(new error.NotFoundError(err.message))
   }
@@ -114,11 +114,17 @@ export const deleteUser = async (req, res, next) => {
     const user = await UserService.getUserById(req.params.id)
 
     if (!user) throw new Error('User not found.')
+
+    const update = {
+      deletedAt: new Date().toString(),
+      email: `--${user.email}--`,
+      cpf: `--${user.cpf}--`
+    }
+    await UserService.deleteUser(req.params.id, update)
   } catch (err) {
     return next(new error.NotFoundError(err.message))
   }
 
-  await UserService.deleteUser(req.params.id)
   const deletedUser = await UserService.getUserById(req.params.id)
 
   // Display deleted user

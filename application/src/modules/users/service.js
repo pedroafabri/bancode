@@ -17,7 +17,7 @@ export const createUser = user => UserModel.create(user)
 export const updateUser = (id, update) => UserModel.updateOne({ _id: id }, update)
 
 // Delete an existing user
-export const deleteUser = id => UserModel.updateOne({ _id: id }, { deletedAt: new Date().toString() })
+export const deleteUser = (id, update) => UserModel.updateOne({ _id: id }, update)
 
 export const displayFormat = user => {
   return {
