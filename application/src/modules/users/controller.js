@@ -2,6 +2,7 @@
 import UserService from './service'
 import cpfCheck from '../../helpers/cpfValidator'
 import emailCheck from '../../helpers/emailValidator'
+import passwordCheck from '../../helpers/passwordValidator'
 import { encrypt } from '../../helpers/encryptPassword'
 import error from 'restify-errors'
 
@@ -46,6 +47,9 @@ export const createUser = async (req, res, next) => {
   const email = await UserService.getUserByEmail(user.email)
   if (email) return next(new error.BadRequestError('Email is already in use.'))
 
+  // Check if user password is valid
+  const validPassword = passwordCheck.validation(user.password)
+  if (!validPassword) return next(new error.BadRequestError('Invalid password.'))
   // Encrypt user password
   user.password = encrypt(user.password)
 
@@ -64,10 +68,6 @@ export const updateUser = async (req, res, next) => {
     const user = await UserService.getUserById(req.params.id)
 
     if (!user) throw new Error()
-
-    // Changes updated at and save
-    user.updatedAt = new Date().toString()
-    await user.save()
   } catch (err) {
     return next(new error.NotFoundError('User not found.'))
   }
@@ -81,19 +81,25 @@ export const updateUser = async (req, res, next) => {
   const update = req.body
 
   // Checks if e-mail was updated and if it's valid
-  if (update.email) {
+  if (update.email || update.email === '') {
     const validEmail = emailCheck.validation(update.email)
     if (!validEmail) return next(new error.BadRequestError('Invalid email.'))
   }
 
   // Checks if CPF was updated and if it's valid
-  if (update.cpf) {
+  if (update.cpf || update.cpf === '') {
     const validCpf = cpfCheck.validation(update.cpf)
     if (!validCpf) return next(new error.BadRequestError('Invalid CPF.'))
   }
 
   // Checks if password was updated and if it's valid
-  if (update.password) update.password = encrypt(update.password)
+  if (update.password || update.password === '') {
+    const validPassword = passwordCheck.validation(update.password)
+    if (!validPassword) return next(new error.BadRequestError('Invalid password.'))
+    update.password = encrypt(update.password)
+  }
+
+  update.updatedAt = new Date().toString()
 
   await UserService.updateUser(req.params.id, update)
   const updatedUser = await UserService.getUserById(req.params.id)
