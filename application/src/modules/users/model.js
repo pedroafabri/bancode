@@ -28,7 +28,8 @@ const userSchema = mongoose.Schema({
   },
   cpf: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   verified: {
     type: Boolean,
@@ -38,7 +39,10 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  balance: Number,
+  balance: {
+    type: Number,
+    required: true
+  },
   operations: [Operation],
   createdAt: {
     type: Date,

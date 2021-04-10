@@ -19,11 +19,24 @@ export const updateUser = (id, update) => UserModel.updateOne({ _id: id }, updat
 // Delete an existing user
 export const deleteUser = id => UserModel.updateOne({ _id: id }, { deletedAt: new Date().toString() })
 
+export const displayFormat = user => {
+  return {
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    cpf: user.cpf,
+    balance: user.balance,
+    verified: user.verified,
+    id: user._id
+  }
+}
+
 export default {
   getAllUsers,
   getUserById,
   getUserByEmail,
   createUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  displayFormat
 }

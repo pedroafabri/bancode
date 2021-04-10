@@ -18,21 +18,21 @@ export const getUser = async (req, res, next) => {
   try {
     const user = await UserService.getUserById(req.params.id)
 
-    if (!user) throw new Error()
+    if (!user) throw new Error('User not found.')
 
     // Display user
-    res.json(user)
+    res.json(UserService.displayFormat(user))
   } catch (err) {
-    return next(new error.NotFoundError('User not found.'))
+    return next(new error.NotFoundError(err.message))
   }
 }
 
 // Creates an user
 export const createUser = async (req, res, next) => {
   try {
-    if (req.body === undefined) throw new Error()
+    if (req.body === undefined) throw new Error('Expected JSON on body.')
   } catch (err) {
-    return next(new error.BadRequestError('Expected JSON on body.'))
+    return next(new error.BadRequestError(err.message))
   }
 
   const user = req.body
@@ -54,9 +54,9 @@ export const createUser = async (req, res, next) => {
   user.password = encrypt(user.password)
 
   try {
-    const newUser = await UserService.createUser(user)
+    const createdUser = await UserService.createUser(user)
     // Display created user
-    res.json(newUser)
+    res.json(UserService.displayFormat(createdUser))
   } catch (err) {
     return next(new error.ServiceUnavailableError(err.message))
   }
@@ -67,15 +67,15 @@ export const updateUser = async (req, res, next) => {
   try {
     const user = await UserService.getUserById(req.params.id)
 
-    if (!user) throw new Error()
+    if (!user) throw new Error('User not found.')
   } catch (err) {
-    return next(new error.NotFoundError('User not found.'))
+    return next(new error.NotFoundError(err.message))
   }
 
   try {
-    if (req.body === undefined) throw new Error()
+    if (req.body === undefined) throw new Error('Expected JSON on body.')
   } catch (err) {
-    return next(new error.BadRequestError('Expected JSON on body.'))
+    return next(new error.BadRequestError(err.message))
   }
 
   const update = req.body
@@ -104,8 +104,8 @@ export const updateUser = async (req, res, next) => {
   await UserService.updateUser(req.params.id, update)
   const updatedUser = await UserService.getUserById(req.params.id)
 
-  // Displayupdated user
-  res.json(updatedUser)
+  // Display updated user
+  res.json(UserService.displayFormat(updatedUser))
 }
 
 // Deletes an user
@@ -113,16 +113,16 @@ export const deleteUser = async (req, res, next) => {
   try {
     const user = await UserService.getUserById(req.params.id)
 
-    if (!user) throw new Error()
+    if (!user) throw new Error('User not found.')
   } catch (err) {
-    return next(new error.NotFoundError('User not found.'))
+    return next(new error.NotFoundError(err.message))
   }
 
   await UserService.deleteUser(req.params.id)
   const deletedUser = await UserService.getUserById(req.params.id)
 
   // Display deleted user
-  res.json(deletedUser)
+  res.json(UserService.displayFormat(deletedUser))
 }
 
 export default {
