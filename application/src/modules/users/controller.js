@@ -8,6 +8,7 @@ import error from 'restify-errors'
 // GET all users JSON
 export const getAllUsers = async (req, res) => {
   const users = await UserService.getAllUsers()
+  // Display all users
   res.json(users)
 }
 
@@ -16,25 +17,21 @@ export const getUser = async (req, res, next) => {
   try {
     const user = await UserService.getUserById(req.params.id)
 
-    /**
-     * BUG NO MONGOOSE QUANDO ELE TESTA UM ID COM EXATAMENTE
-     * 12 CARACTERES. MESMO O ID SENDO INVALIDO A FUNCAO findOne
-     * NAO RETORNA UM ERRO. POR ISSO PRECISAMOS DESSE IF.
-     */
-    if (!user) return next(new error.NotFoundError('User not found.'))
+    if (!user) throw new Error()
+
+    // Display user
+    res.json(user)
   } catch (err) {
     return next(new error.NotFoundError('User not found.'))
   }
-
-  res.json(user)
 }
 
 // Creates an user
 export const createUser = async (req, res, next) => {
   try {
-    if (req.body === undefined) throw new Error('')
+    if (req.body === undefined) throw new Error()
   } catch (err) {
-    return next(new error.BadRequestError(err.message))
+    return next(new error.BadRequestError('Expected JSON on body.'))
   }
 
   const user = req.body
@@ -54,7 +51,7 @@ export const createUser = async (req, res, next) => {
 
   try {
     const newUser = await UserService.createUser(user)
-    // Display message once user is created
+    // Display created user
     res.json(newUser)
   } catch (err) {
     return next(new error.ServiceUnavailableError(err.message))
@@ -62,16 +59,30 @@ export const createUser = async (req, res, next) => {
 }
 
 // Updates an user
-export const updateUser = async (req, res) => {
-  // Get user by id
-  const { id } = req.params
-  const user = await UserService.getUserById(id)
+export const updateUser = async (req, res, next) => {
+  try {
+    const user = await UserService.getUserById(req.params.id)
+
+    if (!user) throw new Error()
+
+    // Changes updated at and save
+    user.updatedAt = new Date().toString()
+    await user.save()
+  } catch (err) {
+    return next(new error.NotFoundError('User not found.'))
+  }
+
+  try {
+    if (req.body === undefined) throw new Error()
+  } catch (err) {
+    return next(new error.BadRequestError('Expected JSON on body.'))
+  }
+
   const update = req.body
 
   // Checks if e-mail was updated and if it's valid
   if (update.email) {
     const validEmail = emailCheck.validation(update.email)
-
     if (!validEmail) return next(new error.BadRequestError('Invalid email.'))
   }
 
@@ -84,12 +95,11 @@ export const updateUser = async (req, res) => {
   // Checks if password was updated and if it's valid
   if (update.password) update.password = encrypt(update.password)
 
-  // Changes updated at and save
-  user.updatedAt = new Date().toString()
-  await user.save()
-  await UserService.updateUser(id, update)
-  // Display message once user is updated
-  res.json(user)
+  await UserService.updateUser(req.params.id, update)
+  const updatedUser = await UserService.getUserById(req.params.id)
+
+  // Displayupdated user
+  res.json(updatedUser)
 }
 
 // Deletes an user
@@ -97,19 +107,15 @@ export const deleteUser = async (req, res, next) => {
   try {
     const user = await UserService.getUserById(req.params.id)
 
-    /**
-     * BUG NO MONGOOSE QUANDO ELE TESTA UM ID COM EXATAMENTE
-     * 12 CARACTERES. MESMO O ID SENDO INVALIDO A FUNCAO findOne
-     * NAO RETORNA UM ERRO. POR ISSO PRECISAMOS DESSE IF.
-     */
-    if (!user) return next(new error.NotFoundError('User not found.'))
+    if (!user) throw new Error()
   } catch (err) {
     return next(new error.NotFoundError('User not found.'))
   }
 
   await UserService.deleteUser(req.params.id)
   const deletedUser = await UserService.getUserById(req.params.id)
-  // Display message once user is deleted
+
+  // Display deleted user
   res.json(deletedUser)
 }
 
