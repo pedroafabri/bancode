@@ -5,6 +5,9 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 // get the new user req.body and sent the welcome email
 export const sendWelcomeEmail = async (email, userInfo) => {
+  // throw a err in case the function dont receive a email
+  if (!email) throw new Error('email field not filled')
+
   // sender template
   const message = {
     to: email,
