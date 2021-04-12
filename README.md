@@ -1,5 +1,5 @@
 # BanCode back-end API
-This is the BanCode back-end API project.
+This is the BanCode back-end API project for my programming classes.
 
 ## Running the application
 
