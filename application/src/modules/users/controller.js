@@ -45,7 +45,7 @@ export const createUser = async (req, res, next) => {
   // Check if user CPF is valid
   if (!cpfCheck.validation(user.cpf)) return next(new error.BadRequestError('Invalid CPF.'))
   user.cpf = CPF.format(user.cpf)
-  
+
   // Check if user e-mail already exists
   const email = await UserService.getUserByEmail(user.email)
   if (email) return next(new error.BadRequestError('Email is already in use.'))
@@ -94,6 +94,7 @@ export const updateUser = async (req, res, next) => {
   if (update.cpf || update.cpf === '') {
     const validCpf = cpfCheck.validation(update.cpf)
     if (!validCpf) return next(new error.BadRequestError('Invalid CPF.'))
+    update.cpf = CPF.format(update.cpf)
   }
 
   // Checks if password was updated and if it's valid
