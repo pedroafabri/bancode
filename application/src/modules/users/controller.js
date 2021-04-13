@@ -3,6 +3,7 @@ import UserService from './service'
 import cpfCheck from '../../helpers/cpfValidator'
 import emailCheck from '../../helpers/emailValidator'
 import passwordCheck from '../../helpers/passwordValidator'
+import { sendWelcomeEmail } from '../../helpers/emailSender'
 import { encrypt } from '../../helpers/encryptPassword'
 import error from 'restify-errors'
 
@@ -55,6 +56,7 @@ export const createUser = async (req, res, next) => {
 
   try {
     const createdUser = await UserService.createUser(user)
+    sendWelcomeEmail(createdUser.email, createdUser)
     // Display created user
     res.json(UserService.displayFormat(createdUser))
   } catch (err) {
