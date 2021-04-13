@@ -1,6 +1,7 @@
 // Requirements from service and npm packages
 import UserService from './service'
 import cpfCheck from '../../helpers/cpfValidator'
+import CPF from 'cpf-check'
 import emailCheck from '../../helpers/emailValidator'
 import passwordCheck from '../../helpers/passwordValidator'
 import { sendWelcomeEmail } from '../../helpers/emailSender'
@@ -43,7 +44,8 @@ export const createUser = async (req, res, next) => {
 
   // Check if user CPF is valid
   if (!cpfCheck.validation(user.cpf)) return next(new error.BadRequestError('Invalid CPF.'))
-
+  user.cpf = CPF.format(user.cpf)
+  
   // Check if user e-mail already exists
   const email = await UserService.getUserByEmail(user.email)
   if (email) return next(new error.BadRequestError('Email is already in use.'))
