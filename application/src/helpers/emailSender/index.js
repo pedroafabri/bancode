@@ -1,5 +1,7 @@
 import sgMail from '@sendgrid/mail'
 
+require('dotenv').config()
+
 // conect with the sendgrid api
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
