@@ -21,13 +21,13 @@ export const deleteUser = (id, update) => UserModel.updateOne({ _id: id }, updat
 
 export const displayFormat = user => {
   return {
+    id: user._id,
     firstName: user.firstName,
     lastName: user.lastName,
     email: user.email,
     cpf: user.cpf,
     balance: user.balance,
-    verified: user.verified,
-    id: user._id
+    verified: user.verified
   }
 }
 
