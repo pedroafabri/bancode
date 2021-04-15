@@ -1,7 +1,7 @@
-export const validation = pass => {
+export const validate = pass => {
   if (pass !== '') return true
 }
 
 export default {
-  validation
+  validate
 }
