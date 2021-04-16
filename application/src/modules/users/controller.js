@@ -48,10 +48,10 @@ export const createUser = async (req, res, next) => {
   // Encrypt user password
   user.password = encrypt(user.password)
 
-  // Try create user and send
+  // Try send email and then create user
   try {
+    await sendWelcomeEmail(user.email, user)
     const createdUser = await UserService.createUser(user)
-    await sendWelcomeEmail(createdUser.email, createdUser)
 
     // Display created user
     res.json(UserService.displayFormat(createdUser))
