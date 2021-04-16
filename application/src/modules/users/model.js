@@ -41,8 +41,7 @@ const userSchema = mongoose.Schema({
   },
   balance: {
     type: Number,
-    default: 0,
-    required: true
+    default: 0
   },
   operations: [Operation],
   createdAt: {
