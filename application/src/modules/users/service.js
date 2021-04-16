@@ -2,24 +2,24 @@
 import UserModel from './model'
 
 // Get all users
-export const getAllUsers = () => UserModel.find({})
+export const getAllUsers = async () => UserModel.find({})
 
 // Get user by id
-export const getUserById = id => UserModel.findOne({ _id: id })
+export const getUserById = async id => UserModel.findOne({ _id: id })
 
 // Get user by email
-export const getUserByEmail = email => UserModel.findOne({ email: email })
+export const getUserByEmail = async email => UserModel.findOne({ email: email })
 
 // Create new user
-export const createUser = user => UserModel.create(user)
+export const createUser = async user => UserModel.create(user)
 
 // Update an existing user
-export const updateUser = (id, update) => UserModel.updateOne({ _id: id }, update)
+export const updateUser = async (id, update) => UserModel.updateOne({ _id: id }, update)
 
 // Delete an existing user
-export const deleteUser = (id, update) => UserModel.updateOne({ _id: id }, update)
+export const deleteUser = async (id, update) => UserModel.updateOne({ _id: id }, update)
 
-export const displayFormat = user => {
+export const displayFormat = async user => {
   return {
     id: user._id,
     firstName: user.firstName,

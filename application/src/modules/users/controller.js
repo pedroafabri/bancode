@@ -36,7 +36,7 @@ export const createUser = async (req, res, next) => {
 
   // Check if user e-mail already exists
   const email = await UserService.getUserByEmail(user.email)
-  if (email) return next(BadRequestError('Email is already in use.'))
+  if (email) return next(new BadRequestError('Email is already in use.'))
 
   // Check if user CPF is valid
   if (!cpfCheck.validate(user.cpf)) return next(new BadRequestError('Invalid CPF.'))
