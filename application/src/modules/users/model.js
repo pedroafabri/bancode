@@ -46,7 +46,7 @@ const userSchema = mongoose.Schema({
   operations: [Operation],
   createdAt: {
     type: Date,
-    default: new Date().toString()
+    default: Date.now()
   },
   updatedAt: Date,
   deletedAt: Date
