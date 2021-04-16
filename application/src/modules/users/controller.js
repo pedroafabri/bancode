@@ -109,7 +109,7 @@ export const deleteUser = async (req, res, next) => {
     }
     await UserService.deleteUser(req.params.id, update)
   } catch (err) {
-    return next(new error.NotFoundError(err.message))
+    return next(err)
   }
 
   const deletedUser = await UserService.getUserById(req.params.id)
