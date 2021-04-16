@@ -19,7 +19,7 @@ export const updateUser = async (id, update) => UserModel.updateOne({ _id: id },
 // Delete an existing user
 export const deleteUser = async (id, update) => UserModel.updateOne({ _id: id }, update)
 
-export const displayFormat = async user => {
+export const displayFormat = user => {
   return {
     id: user._id,
     firstName: user.firstName,
