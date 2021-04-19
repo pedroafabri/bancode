@@ -97,24 +97,14 @@ export const updateUser = async (req, res, next) => {
 // Deletes an user
 export const deleteUser = async (req, res, next) => {
   try {
-    const user = await UserService.getUserById(req.params.id)
+    const deletedUser = await UserService.getUserById(req.params.id)
 
-    if (!user) throw new Error('User not found.')
-
-    const update = {
-      deletedAt: new Date().toString(),
-      email: `--${user.email}--`,
-      cpf: `--${user.cpf}--`
-    }
-    await UserService.deleteUser(req.params.id, update)
+    await UserService.deleteUser(req.params.id, { deletedAt: new Date().toString() })
+    // Display deleted user
+    res.json(UserService.displayFormat(deletedUser))
   } catch (err) {
     return next(err)
   }
-
-  const deletedUser = await UserService.getUserById(req.params.id)
-
-  // Display deleted user
-  res.json(UserService.displayFormat(deletedUser))
 }
 
 export default {
