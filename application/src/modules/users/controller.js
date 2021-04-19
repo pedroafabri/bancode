@@ -99,7 +99,7 @@ export const deleteUser = async (req, res, next) => {
   try {
     const deletedUser = await UserService.getUserById(req.params.id)
 
-    await UserService.deleteUser(req.params.id, { deletedAt: new Date().toString() })
+    await UserService.deleteUser(req.params.id)
     // Display deleted user
     res.json(UserService.displayFormat(deletedUser))
   } catch (err) {
