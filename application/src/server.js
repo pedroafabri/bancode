@@ -5,7 +5,7 @@ const PORT = process.env.PORT || 3000
 
 const start = () => {
   const server = restify.createServer()
-  server.use(restify.plugins.bodyParser())
+  server.use(restify.plugins.jsonBodyParser())
 
   // Initialize every route
   for (const route of Routes) {

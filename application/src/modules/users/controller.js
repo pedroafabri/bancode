@@ -31,22 +31,20 @@ export const getUser = async (req, res, next) => {
 export const createUser = async (req, res, next) => {
   const user = req.body
 
-  // Check if user e-mail is valid
-  if (!emailCheck.validate(user.email)) return next(new BadRequestError('Invalid email.'))
-
-  // Check if user e-mail already exists
-  const email = await UserService.getUserByEmail(user.email)
-  if (email) return next(new BadRequestError('Email is already in use.'))
-
   // Check if user CPF is valid
   if (!cpfCheck.validate(user.cpf)) return next(new BadRequestError('Invalid CPF.'))
   user.cpf = CPF.format(user.cpf)
 
   // Check if user password is valid
-  const validPassword = passwordCheck.validate(user.password)
-  if (!validPassword) return next(new BadRequestError('Invalid password.'))
+  if (!passwordCheck.validate(user.password)) return next(new BadRequestError('Invalid password.'))
   // Encrypt user password
   user.password = encrypt(user.password)
+
+  // Check if user e-mail is valid
+  if (!emailCheck.validate(user.email)) return next(new BadRequestError('Invalid email.'))
+  // Check if user e-mail already exists
+  const email = await UserService.getUserByEmail(user.email)
+  if (email) return next(new BadRequestError('Email is already in use.'))
 
   // Try send email and then create user
   try {
@@ -62,28 +60,29 @@ export const createUser = async (req, res, next) => {
 
 // Updates an user
 export const updateUser = async (req, res, next) => {
-  await UserService.getUserById(req.params.id)
-
   const update = req.body
-
-  // Checks if e-mail was updated and if it's valid
-  if (update.email || update.email === '') {
-    const validEmail = emailCheck.validation(update.email)
-    if (!validEmail) return next(new BadRequestError('Invalid email.'))
-  }
 
   // Checks if CPF was updated and if it's valid
   if (update.cpf || update.cpf === '') {
-    const validCpf = cpfCheck.validate(update.cpf)
-    if (!validCpf) return next(new BadRequestError('Invalid CPF.'))
+    if (!cpfCheck.validate(update.cpf)) return next(new BadRequestError('Invalid CPF.'))
     update.cpf = CPF.format(update.cpf)
   }
 
   // Checks if password was updated and if it's valid
-  passwordCheck.validate(update.password)
-  update.password = encrypt(update.password)
+  if (update.password || update.password === '') {
+    if (!passwordCheck.validate(update.password)) return next(new BadRequestError('Invalid password.'))
+    update.password = encrypt(update.password)
+  }
+
+  // Checks if e-mail was updated and if it's valid
+  if (update.email || update.email === '') {
+    if (!emailCheck.validate(update.email)) return next(new BadRequestError('Invalid email.'))
+    const email = await UserService.getUserByEmail(update.email)
+    if (email) return next(new BadRequestError('Email is already in use.'))
+  }
 
   update.updatedAt = new Date().toString()
+
   try {
     await UserService.updateUser(req.params.id, update)
     const updatedUser = await UserService.getUserById(req.params.id)
