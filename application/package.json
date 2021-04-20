@@ -46,6 +46,9 @@
   "dependencies": {
     "@sendgrid/mail": "^7.4.2",
     "core-js": "^3.10.0",
+    "cpf-check": "^3.0.0",
+    "email-validator": "^2.0.4",
+    "md5": "^2.3.0",
     "mongoose": "^5.12.3",
     "regenerator-runtime": "^0.13.7",
     "restify": "^8.5.1",
