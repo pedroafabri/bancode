@@ -41,6 +41,7 @@
     "jscpd": "^3.3.25",
     "nodemon": "^2.0.7",
     "snazzy": "^9.0.0",
+    "standard": "^16.0.3",
     "standardjs": "^1.0.0-alpha"
   },
   "dependencies": {
@@ -48,6 +49,7 @@
     "core-js": "^3.10.0",
     "cpf-check": "^3.0.0",
     "email-validator": "^2.0.4",
+    "jsonwebtoken": "^8.5.1",
     "md5": "^2.3.0",
     "mongoose": "^5.12.3",
     "regenerator-runtime": "^0.13.7",
