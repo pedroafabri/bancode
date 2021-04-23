@@ -9,7 +9,7 @@ export const jwtAuthenticator = async (req, res, next) => {
     const decodedToken = verify(token, process.env.JWT_SECRET)
 
     const user = await UserService.getUserById(decodedToken.sub)
-    if (user.deletedAt !== undefined) throw new Error()
+    if (!user.verified) throw new Error()
 
     req.decodedToken = decodedToken
 
