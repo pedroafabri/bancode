@@ -1,7 +1,7 @@
 import restify from 'restify'
 import Routes from './routes'
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3001
 
 const start = () => {
   const server = restify.createServer()
