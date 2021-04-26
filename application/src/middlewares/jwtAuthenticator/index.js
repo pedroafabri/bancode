@@ -9,12 +9,13 @@ export const jwtAuthenticator = async (req, res, next) => {
     const decodedToken = verify(token, process.env.JWT_SECRET)
 
     const user = await UserService.getUserById(decodedToken.sub)
-    if (!user.verified) throw new Error()
+    if (!user.verified) return next(new UnauthorizedError('Unverified user.'))
+    if (user.deletedAt) return next(new UnauthorizedError('Inactive User.'))
 
     req.decodedToken = decodedToken
 
     next()
   } catch (err) {
-    return next(new UnauthorizedError())
+    return next(new UnauthorizedError('Invalid token.'))
   }
 }
