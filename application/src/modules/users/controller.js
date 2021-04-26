@@ -81,7 +81,7 @@ export const updateUser = async (req, res, next) => {
     if (email) return next(new BadRequestError('Email is already in use.'))
   }
 
-  update.updatedAt = new Date().toString()
+  update.updatedAt = Date.now()
 
   try {
     await UserService.updateUser(req.params.id, update)
