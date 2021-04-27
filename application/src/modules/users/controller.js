@@ -6,7 +6,7 @@ import emailCheck from '../../helpers/emailValidator'
 import passwordCheck from '../../helpers/passwordValidator'
 import { sendWelcomeEmail } from '../../helpers/emailSender'
 import { encrypt } from '../../helpers/encryptPassword'
-import { BadRequestError } from 'restify-errors'
+import { BadRequestError, UnauthorizedError } from 'restify-errors'
 import jwt from 'jsonwebtoken'
 
 // GET all users JSON
@@ -108,7 +108,7 @@ export const deleteUser = async (req, res, next) => {
   }
 }
 
-export const validateUser = async (req, res, next) => {
+export const authenticateUser = async (req, res, next) => {
   const userData = req.body
   if (!userData.email && !userData.password) return next(new BadRequestError('fields not filled.'))
   if (!userData.email) return next(new BadRequestError('email field not filled.'))
@@ -117,17 +117,16 @@ export const validateUser = async (req, res, next) => {
   try {
     // get the user by the email
     const user = await UserService.getUserByEmail(req.body.email)
-    if (!user) throw new Error('user not found, check if the email is correct ')
+    if (!user) return next(new UnauthorizedError('invalid credentials.'))
 
     // checks if passwords are the same
-    if (encrypt(userData.password) !== user.password) throw new Error('invalid password.')
+    if (encrypt(userData.password) !== user.password) return next(new UnauthorizedError('invalid credentials.'))
 
     // create a  jwt token if the user exists in the database
-    const token = await jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: 3600 })
+    const token = await jwt.sign({ sub: user.id }, process.env.JWT_SECRET, { expiresIn: 3600 })
 
     // in the event that the information matches we check the user and update him
-    user.verified = true
-    await UserService.updateUser(user._id, user)
+    if (!user.verified) return next(new BadRequestError('user not verified'))
 
     // display the token
     res.json({ token: token })
@@ -141,6 +140,6 @@ export default {
   getUser,
   createUser,
   updateUser,
-  validateUser,
+  authenticateUser,
   deleteUser
 }

@@ -1,9 +1,8 @@
 import restify from 'restify'
 import Routes from './routes'
 
-const PORT = process.env.PORT || 3001
-
 const start = () => {
+  const PORT = process.env.PORT || 3001
   const server = restify.createServer()
   server.use(restify.plugins.jsonBodyParser())
 
@@ -17,6 +16,5 @@ const start = () => {
 }
 
 export default {
-  PORT,
   start
 }
