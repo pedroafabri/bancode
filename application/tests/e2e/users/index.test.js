@@ -1,6 +1,9 @@
-/* globals describe beforeAll afterAll */
+/* globals describe beforeAll afterAll it expect */
 
 import { connectTestDatabase, disconnectTestDatabase } from '../../../src/database'
+import UserTest from './testRoutes'
+
+const userTest = new UserTest()
 
 describe('users test', () => {
   beforeAll(async () => {
@@ -9,5 +12,10 @@ describe('users test', () => {
 
   afterAll(async () => {
     await disconnectTestDatabase()
+  })
+
+  it('Should get all users', async () => {
+    const response = await userTest.getAllUsers()
+    expect(response.status).toBe(200)
   })
 })

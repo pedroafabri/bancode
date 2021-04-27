@@ -3,7 +3,7 @@ import Routes from './routes'
 
 const PORT = process.env.PORT || 3000
 
-const start = () => {
+const create = () => {
   const server = restify.createServer()
   server.use(restify.plugins.jsonBodyParser())
 
@@ -12,11 +12,18 @@ const start = () => {
     route.initialize(server)
   }
 
+  return server
+}
+
+const start = () => {
+  const server = create()
+
   // Start server
   server.listen(PORT, () => console.log(`Server listening on port ${PORT}.`))
 }
 
 export default {
   PORT,
+  create,
   start
 }

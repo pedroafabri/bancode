@@ -33,5 +33,7 @@ export const disconnectTestDatabase = async () => {
 }
 
 export default {
-  connect
+  connect,
+  connectTestDatabase,
+  disconnectTestDatabase
 }
