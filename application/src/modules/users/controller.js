@@ -114,25 +114,21 @@ export const authenticateUser = async (req, res, next) => {
   if (!userData.email) return next(new BadRequestError('email field not filled.'))
   if (!userData.password) return next(new BadRequestError('password field not filled.'))
 
-  try {
-    // get the user by the email
-    const user = await UserService.getUserByEmail(req.body.email)
-    if (!user) return next(new UnauthorizedError('invalid credentials.'))
+  // get the user by the email
+  const user = await UserService.getUserByEmail(userData.email)
+  if (!user) return next(new UnauthorizedError('invalid credentials.'))
 
-    // checks if passwords are the same
-    if (encrypt(userData.password) !== user.password) return next(new UnauthorizedError('invalid credentials.'))
+  // checks if passwords are the same
+  if (encrypt(userData.password) !== user.password) return next(new UnauthorizedError('invalid credentials.'))
 
-    // create a  jwt token if the user exists in the database
-    const token = await jwt.sign({ sub: user.id }, process.env.JWT_SECRET, { expiresIn: 3600 })
+  // create a  jwt token if the user exists in the database
+  const token = await jwt.sign({ sub: user.id }, process.env.JWT_SECRET, { expiresIn: 3600 })
 
-    // in the event that the information matches we check the user and update him
-    if (!user.verified) return next(new BadRequestError('user not verified'))
+  // in the event that the information matches we check the user and update him
+  if (!user.verified) return next(new BadRequestError('user not verified'))
 
-    // display the token
-    res.json({ token: token })
-  } catch (error) {
-    return next(error)
-  }
+  // display the token
+  res.json({ token: token })
 }
 
 export default {
