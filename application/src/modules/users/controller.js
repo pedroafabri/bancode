@@ -123,8 +123,7 @@ export const authenticateUser = async (req, res, next) => {
 
   // create a  jwt token if the user exists in the database
   const token = await jwt.sign({ sub: user.id }, process.env.JWT_SECRET, { expiresIn: 3600 })
-
-  // in the event that the information matches we check the user and update him
+  // if the  user is not verified (false) return
   if (!user.verified) return next(new BadRequestError('user not verified'))
 
   // display the token
