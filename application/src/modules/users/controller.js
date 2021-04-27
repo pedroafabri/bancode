@@ -6,7 +6,8 @@ import emailCheck from '../../helpers/emailValidator'
 import passwordCheck from '../../helpers/passwordValidator'
 import { sendWelcomeEmail } from '../../helpers/emailSender'
 import { encrypt } from '../../helpers/encryptPassword'
-import { BadRequestError } from 'restify-errors'
+import { BadRequestError, UnauthorizedError } from 'restify-errors'
+import jwt from 'jsonwebtoken'
 
 // GET all users JSON
 export const getAllUsers = async (req, res) => {
@@ -47,8 +48,9 @@ export const createUser = async (req, res, next) => {
   if (email) return next(new BadRequestError('Email is already in use.'))
 
   // Try send email and then create user
+  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: 3600 })
   try {
-    await sendWelcomeEmail(user.email, user)
+    await sendWelcomeEmail(user, token)
     const createdUser = await UserService.createUser(user)
 
     // Display created user
@@ -57,6 +59,27 @@ export const createUser = async (req, res, next) => {
     return next(err)
   }
 }
+
+// Authenticate user email
+export const authenticateUser = async (req, res, next) => {
+
+  const user = await UserService.getUserByEmail(req.body.email)
+  const token = await req.headers.authorization.replace('Bearer', '').trim()
+
+  // checks if token is valid
+  try{
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET)
+
+    // update user to verified
+    user.verified = true
+    user.save()
+
+    res.send('Email validado!')
+  } catch (err) {
+    return next (new UnauthorizedError('invalid token'))
+  }
+}
+
 
 // Updates an user
 export const updateUser = async (req, res, next) => {
@@ -111,6 +134,7 @@ export default {
   getAllUsers,
   getUser,
   createUser,
+  authenticateUser,
   updateUser,
   deleteUser
 }

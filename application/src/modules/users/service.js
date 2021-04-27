@@ -13,6 +13,9 @@ export const getUserByEmail = async email => UserModel.findOne({ email: email })
 // Create new user
 export const createUser = async user => UserModel.create(user)
 
+// Authenticate user
+export const authenticateUser = async (email, update) => UserModel.updateOne({ email: email }, update)
+
 // Update an existing user
 export const updateUser = async (id, update) => UserModel.updateOne({ _id: id }, update)
 
@@ -36,6 +39,7 @@ export default {
   getUserById,
   getUserByEmail,
   createUser,
+  authenticateUser,
   updateUser,
   deleteUser,
   displayFormat
