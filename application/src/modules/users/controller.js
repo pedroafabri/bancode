@@ -7,6 +7,7 @@ import passwordCheck from '../../helpers/passwordValidator'
 import { sendWelcomeEmail } from '../../helpers/emailSender'
 import { encrypt } from '../../helpers/encryptPassword'
 import { BadRequestError } from 'restify-errors'
+import jwt from 'jsonwebtoken'
 
 // GET all users JSON
 export const getAllUsers = async (req, res) => {
@@ -107,10 +108,39 @@ export const deleteUser = async (req, res, next) => {
   }
 }
 
+export const validateUser = async (req, res, next) => {
+  const userData = req.body
+  if (!userData.email && !userData.password) return next(new BadRequestError('fields not filled.'))
+  if (!userData.email) return next(new BadRequestError('email field not filled.'))
+  if (!userData.password) return next(new BadRequestError('password field not filled.'))
+
+  try {
+    // get the user by the email
+    const user = await UserService.getUserByEmail(req.body.email)
+    if (!user) throw new Error('user not found, check if the email is correct ')
+
+    // checks if passwords are the same
+    if (encrypt(userData.password) !== user.password) throw new Error('invalid password.')
+
+    // create a  jwt token if the user exists in the database
+    const token = await jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: 3600 })
+
+    // in the event that the information matches we check the user and update him
+    user.verified = true
+    await UserService.updateUser(user._id, user)
+
+    // display the token
+    res.json({ token: token })
+  } catch (error) {
+    return next(error)
+  }
+}
+
 export default {
   getAllUsers,
   getUser,
   createUser,
   updateUser,
+  validateUser,
   deleteUser
 }
