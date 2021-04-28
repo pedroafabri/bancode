@@ -7,7 +7,7 @@ import passwordCheck from '../../helpers/passwordValidator'
 import { sendWelcomeEmail } from '../../helpers/emailSender'
 import { encrypt } from '../../helpers/encryptPassword'
 import { BadRequestError, UnauthorizedError } from 'restify-errors'
-import jwt from 'jsonwebtoken'
+import createToken from '../../../src/helpers/tokenGenerator'
 
 // GET all users JSON
 export const getAllUsers = async (req, res) => {
@@ -110,8 +110,7 @@ export const deleteUser = async (req, res, next) => {
 
 export const authenticateUser = async (req, res, next) => {
   const userData = req.body
-  if (!userData.email && !userData.password) return next(new BadRequestError('fields not filled.'))
-  if (!userData.email) return next(new BadRequestError('email field not filled.'))
+  if (!userData.email) return next(new BadRequestError('email not provided.'))
   if (!userData.password) return next(new BadRequestError('password field not filled.'))
 
   // get the user by the email
@@ -121,13 +120,14 @@ export const authenticateUser = async (req, res, next) => {
   // checks if passwords are the same
   if (encrypt(userData.password) !== user.password) return next(new UnauthorizedError('invalid credentials.'))
 
-  // create a  jwt token if the user exists in the database
-  const token = await jwt.sign({ sub: user.id }, process.env.JWT_SECRET, { expiresIn: 3600 })
   // if the  user is not verified (false) return
   if (!user.verified) return next(new BadRequestError('user not verified'))
 
+  // creates a jwt token that expires in an hour
+  const token = createToken.token(user._id)
+
   // display the token
-  res.json({ token: token })
+  res.json({ token })
 }
 
 export default {
