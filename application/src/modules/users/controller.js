@@ -7,7 +7,7 @@ import passwordCheck from '../../helpers/passwordValidator'
 import { sendWelcomeEmail } from '../../helpers/emailSender'
 import { encrypt } from '../../helpers/encryptPassword'
 import { BadRequestError, UnauthorizedError } from 'restify-errors'
-import createToken from '../../../src/helpers/tokenGenerator'
+import { token } from '../../../src/helpers/tokenGenerator'
 
 // GET all users JSON
 export const getAllUsers = async (req, res) => {
@@ -123,11 +123,8 @@ export const authenticateUser = async (req, res, next) => {
   // if the  user is not verified (false) return
   if (!user.verified) return next(new BadRequestError('user not verified'))
 
-  // creates a jwt token that expires in an hour
-  const token = createToken.token(user._id)
-
-  // display the token
-  res.json({ token })
+  // creates a jwt token that expires in an hour and display
+  res.json({ token: token(user._id) })
 }
 
 export default {
