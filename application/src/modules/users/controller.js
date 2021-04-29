@@ -7,7 +7,7 @@ import passwordCheck from '../../helpers/passwordValidator'
 import { sendWelcomeEmail } from '../../helpers/emailSender'
 import { encrypt } from '../../helpers/encryptPassword'
 import { BadRequestError, ForbiddenError, UnauthorizedError } from 'restify-errors'
-import { sign } from '../../../src/helpers/tokenGenerator'
+import { sign } from '../../../src/helpers/token'
 
 // GET all users JSON
 export const getAllUsers = async (req, res) => {
