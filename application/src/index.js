@@ -5,7 +5,6 @@ import Database from './database'
 
 const env = process.env.NODE_ENV
 
-
 // If not production or staging, configure .env
 if (env !== 'production' && env !== 'staging') {
   require('dotenv').config()
