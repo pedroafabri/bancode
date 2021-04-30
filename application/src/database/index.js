@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import {MongoMemoryServer} from 'mongodb-memory-server'
+import { MongoMemoryServer } from 'mongodb-memory-server'
 
 const connect = (url = process.env.DB_URL) => new Promise((resolve, reject) => {
   console.log('Connecting to database...')

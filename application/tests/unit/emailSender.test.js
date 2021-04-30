@@ -1,3 +1,5 @@
+/* globals describe it expect */
+
 import EmailSender from '../../src/helpers/emailSender'
 
 describe('EmailSender tests', () => {
@@ -13,7 +15,7 @@ describe('EmailSender tests', () => {
   })
 
   it('Should send e-mail correctly', async () => {
-    const send = () => EmailSender.sendWelcomeEmail('pedroafabri@gmail.com', {firstName: 'Pedro', lastName: 'Fabri'})
+    const send = () => EmailSender.sendWelcomeEmail('pedroafabri@gmail.com', { firstName: 'Pedro', lastName: 'Fabri' })
     expect(send).not.toThrow(Error)
   })
 })

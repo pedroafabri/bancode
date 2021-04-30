@@ -20,7 +20,7 @@ export const authenticateUser = async (email, update) => UserModel.updateOne({ e
 export const updateUser = async (id, update) => UserModel.updateOne({ _id: id }, update)
 
 // Delete an existing user
-export const deleteUser = async id => UserModel.updateOne({ _id: id }, { deletedAt: new Date().toString() })
+export const deleteUser = async id => UserModel.updateOne({ _id: id }, { deletedAt: Date.now() })
 
 export const displayFormat = user => {
   return {
