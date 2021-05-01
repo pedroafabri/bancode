@@ -111,7 +111,7 @@ export const deleteUser = async (req, res, next) => {
 export const authenticateUser = async (req, res, next) => {
   const userData = req.body
   if (!userData.email) return next(new BadRequestError('email not provided.'))
-  if (!userData.password) return next(new BadRequestError('password field not filled.'))
+  if (!userData.password) return next(new BadRequestError('password not provided.'))
 
   // get the user by the email
   const user = await UserService.getUserByEmail(userData.email)

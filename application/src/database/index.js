@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { MongoMemoryServer } from 'mongodb-memory-server'
 
 const connect = (url = process.env.DB_URL) => new Promise((resolve, reject) => {
   console.log('Connecting to database...')
@@ -17,6 +18,22 @@ const connect = (url = process.env.DB_URL) => new Promise((resolve, reject) => {
   })
 })
 
-export default {
-  connect
+let mongoServer
+
+const connectDataBaseTest = async () => {
+  mongoServer = new MongoMemoryServer()
+
+  const uri = await mongoServer.getUri()
+  mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+}
+
+const disconnectTestDataBase = async () => {
+  await mongoose.disconnect()
+  await mongoServer.stop()
+}
+
+export {
+  connect,
+  connectDataBaseTest,
+  disconnectTestDataBase
 }
