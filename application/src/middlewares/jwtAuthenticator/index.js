@@ -1,16 +1,15 @@
-import { verify } from 'jsonwebtoken'
+import { verify } from '../../helpers/token'
 import { UnauthorizedError } from 'restify-errors'
 import { UserService } from '../../modules/users'
 
 export const jwtAuthenticator = async (req, res, next) => {
-  const token = req.headers.authorization.replace('Bearer ', '')
-
   try {
-    const decodedToken = verify(token, process.env.JWT_SECRET)
+    const token = req.headers.authorization.replace('Bearer ', '')
+    const decodedToken = verify(token)
 
     const user = await UserService.getUserById(decodedToken.sub)
+    if (user.deletedAt) return next(new UnauthorizedError('Inactive user.'))
     if (!user.verified) return next(new UnauthorizedError('Unverified user.'))
-    if (user.deletedAt) return next(new UnauthorizedError('Inactive User.'))
 
     req.decodedToken = decodedToken
 
