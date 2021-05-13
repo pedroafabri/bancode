@@ -115,6 +115,7 @@ export const authenticateUser = async (req, res, next) => {
 
   // get the user by the email
   const user = await UserService.getUserByEmail(userData.email)
+
   if (!user) return next(new UnauthorizedError('invalid credentials.'))
 
   // checks if passwords are the same
