@@ -7,7 +7,7 @@ import passwordCheck from '../../helpers/passwordValidator'
 import { sendWelcomeEmail } from '../../helpers/emailSender'
 import { encrypt } from '../../helpers/encryptPassword'
 import { BadRequestError, ForbiddenError, UnauthorizedError } from 'restify-errors'
-import { sign } from '../../../src/helpers/tokenGenerator'
+import { sign } from '../../../src/helpers/token'
 
 // GET all users JSON
 export const getAllUsers = async (req, res) => {
@@ -124,7 +124,7 @@ export const authenticateUser = async (req, res, next) => {
   if (!user.verified) return next(new ForbiddenError('user not verified'))
 
   // creates a jwt token that expires in an hour and display
-  res.json({ token: sign(user._id) })
+  res.json({ token: sign({ id: user._id }) })
 }
 
 export default {

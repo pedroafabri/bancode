@@ -1,14 +1,18 @@
-/* globals describe it expect beforeAll afterAll */
+/* globals jest describe it expect beforeAll beforeEach afterAll */
 
 import { jwtAuthenticator } from '../../src/middlewares/jwtAuthenticator'
 import { connectTestDatabase, disconnectTestDatabase } from '../../src/database'
-import { UserService } from '../../src/modules/users'
+import { UserService, UserModel } from '../../src/modules/users'
+import { sign, verify } from '../../src/helpers/token'
+import { UnauthorizedError } from 'restify-errors'
 
-const req = {
-  headers: {
-    authorization: 'token'
-  }
-}
+require('dotenv').config()
+
+let req
+
+const res = {}
+
+const next = jest.fn(error => error)
 
 let idealUser
 
@@ -16,7 +20,7 @@ describe('jwtAuthenticator tests', () => {
   beforeAll(async () => {
     await connectTestDatabase()
 
-    idealUser = await UserService.createUser({
+    idealUser = await UserModel.create({
       firstName: 'usuario',
       lastName: 'teste',
       email: 'ideal@teste.com',
@@ -30,13 +34,24 @@ describe('jwtAuthenticator tests', () => {
     await disconnectTestDatabase()
   })
 
-  it('Must pass without errors', () => {
-    req.headers.authorization = 'criar token'
-
-    expect(async () => await jwtAuthenticator(req)).not.toThrow()
+  beforeEach(() => {
+    req = {
+      headers: {
+      }
+    }
   })
 
-  it('Must pass with \'Unverified user.\' error', async () => {
+  it('Must pass without errors', async () => {
+    const testToken = sign({ id: idealUser._id })
+    req.headers.authorization = testToken
+
+    await jwtAuthenticator(req, res, next)
+
+    expect(req.decodedToken).toMatchObject(verify(testToken))
+    expect(next.mock.calls.length).toBe(1)
+  })
+
+  it('Must pass with "Unverified user." error', async () => {
     const unverifiedUser = await UserService.createUser({
       firstName: 'usuario',
       lastName: 'teste',
@@ -45,14 +60,15 @@ describe('jwtAuthenticator tests', () => {
       password: 'senhateste'
     })
 
-    req.headers.authorization = 'criar token'
+    req.headers.authorization = sign({ id: unverifiedUser._id })
 
-    const res = await jwtAuthenticator(req)
-    expect(res.status).toBe(401)
-    expect(async () => await jwtAuthenticator(req)).toThrow('Unverified user.')
+    const result = await jwtAuthenticator(req, res, next)
+
+    expect(result.message).toBe('Unverified user.')
+    expect(result).toBeInstanceOf(UnauthorizedError)
   })
 
-  it('Must pass with \'Inactive user.\' error', async () => {
+  it('Must pass with "Inactive user." error', async () => {
     const inactiveUser = await UserService.createUser({
       firstName: 'usuario',
       lastName: 'teste',
@@ -61,30 +77,39 @@ describe('jwtAuthenticator tests', () => {
       password: 'senhateste'
     })
 
-    req.headers.authorization = 'criar token'
+    req.headers.authorization = sign({ id: inactiveUser._id })
 
     await UserService.deleteUser(inactiveUser._id)
 
-    const res = await jwtAuthenticator(req)
-    expect(res.status).toBe(401)
-    expect(async () => await jwtAuthenticator(req)).toThrow('Inactive user.')
+    const result = await jwtAuthenticator(req, res, next)
+
+    expect(result.message).toBe('Inactive user.')
+    expect(result).toBeInstanceOf(UnauthorizedError)
   })
 
-  it('Must pass with \'Invalid token.\' error using an expired token', async () => {
-    const expiredToken = 'criar token expirado'
-    req.headers.authorization = expiredToken
+  it('Must pass with "Invalid token." error do not providing a token', async () => {
+    const result = await jwtAuthenticator(req, res, next)
 
-    const res = await jwtAuthenticator(req)
-    expect(res.status).toBe(401)
-    expect(async () => await jwtAuthenticator(req)).toThrow('Invalid token.')
+    expect(result.message).toBe('Invalid token.')
+    expect(result).toBeInstanceOf(UnauthorizedError)
   })
 
-  it('Must pass with \'Invalid token.\' error using an invalid token', async () => {
+  it('Must pass with "Invalid token." error using an expired token', async () => {
+    req.headers.authorization = sign({ id: idealUser._id, expiresIn: 0 })
+
+    const result = await jwtAuthenticator(req, res, next)
+
+    expect(result.message).toBe('Invalid token.')
+    expect(result).toBeInstanceOf(UnauthorizedError)
+  })
+
+  it('Must pass with "Invalid token." error using an invalid token', async () => {
     const invalidToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.j8WqMThKG418s5xSX0xWsIGePYurlmOCylpyBrKmMq0'
     req.headers.authorization = invalidToken
 
-    const res = await jwtAuthenticator(req)
-    expect(res.status).toBe(401)
-    expect(async () => await jwtAuthenticator(req)).toThrow('Invalid token.')
+    const result = await jwtAuthenticator(req, res, next)
+
+    expect(result.message).toBe('Invalid token.')
+    expect(result).toBeInstanceOf(UnauthorizedError)
   })
 })
