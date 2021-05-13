@@ -34,7 +34,7 @@ export default class UserTest {
       .del(`${this._endpoint}/${id}`)
   }
 
-  verifieUser (body) {
+  verifyUser (body) {
     return this._app
       .post(`${this._endpoint}/authentication`)
       .send(body)

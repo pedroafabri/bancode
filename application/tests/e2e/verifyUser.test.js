@@ -20,29 +20,24 @@ describe('users test', () => {
       balance: 0,
       verified: true
     })
+
+    await UserModel.create({
+      firstName: 'matheus',
+      lastName: 'henrique',
+      cpf: '47744346807',
+      email: 'narval@yopmail.com',
+      password: encrypt('mamaco'),
+      balance: 0
+    }
+    )
   })
 
   afterAll(async () => {
     await disconnectTestDataBase()
   })
 
-  const defaultUser = {
-    firstName: 'matheus',
-    lastName: 'henrique',
-    cpf: '47744346807',
-    email: 'narval@yopmail.com',
-    password: 'mamaco',
-    balance: 0
-  }
-
-  it('should create a user', async () => {
-    const newUser = defaultUser
-    const { status } = await usertest.createUser(newUser)
-    expect(status).toBe(200)
-  })
-
   it('should verifie if  the email was provided', async () => {
-    const { body } = await usertest.verifieUser({
+    const { body } = await usertest.verifyUser({
       email: '',
       password: 'mamaco'
     })
@@ -51,8 +46,8 @@ describe('users test', () => {
     expect(body.message).toBe('email not provided.')
   })
 
-  it('should verifie if  the password was provided', async () => {
-    const { body } = await usertest.verifieUser({
+  it('should verify if  the password was provided', async () => {
+    const { body } = await usertest.verifyUser({
       email: 'narval@yopmail.com',
       password: ''
     })
@@ -61,8 +56,8 @@ describe('users test', () => {
     expect(body.message).toBe('password not provided.')
   })
 
-  it('should verifie if the user is not athenticated', async () => {
-    const { status, body } = await usertest.verifieUser({
+  it('should verify if the user is not athenticated', async () => {
+    const { status, body } = await usertest.verifyUser({
       email: 'narval@yopmail.com',
       password: 'mamaco'
     })
@@ -72,7 +67,7 @@ describe('users test', () => {
   })
 
   it('should return 401', async () => {
-    const { status, body } = await usertest.verifieUser({
+    const { status, body } = await usertest.verifyUser({
       email: 'narva@yopmail.com',
       password: 'mamaco'
     })
@@ -81,8 +76,8 @@ describe('users test', () => {
     expect(body.message).toBe('invalid credentials.')
   })
 
-  it.only('should return 200', async () => {
-    const { status } = await usertest.verifieUser({
+  it('should return 200', async () => {
+    const { status } = await usertest.verifyUser({
       email: 'samecima@yopmail.com',
       password: 'mamaco'
     })
