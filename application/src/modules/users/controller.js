@@ -49,7 +49,7 @@ export const createUser = async (req, res, next) => {
   if (email) return next(new BadRequestError('Email is already in use.'))
 
   // Try send email and then create user
-  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: 3600 })
+  const token = sign({ userId: user.id })
   try {
     await sendWelcomeEmail(user, token)
     const createdUser = await UserService.createUser(user)
@@ -61,24 +61,22 @@ export const createUser = async (req, res, next) => {
   }
 }
 
-// Authenticate user email
-export const authenticateUser = async (req, res, next) => {
-
+// validate user email
+export const validateUser = async (req, res, next) => {
+  const{email, token} = req.body
   // checks if token is valid
   try{
-    const user = await UserService.getUserByEmail(req.body.email)
+    const user = await UserService.getUserByEmail(email)
 
     if(!user) return next (new UnauthorizedError('invalid email'))
 
-    const token = await req.headers.authorization.replace('Bearer', '').trim()
-
-    const decodedToken = verify(token)
+    verify(token)
 
     // update user to verified
     user.verified = true
     user.save()
 
-    res.send('Email validado!')
+    res.json('Email verified!')
   } catch (err) {
     return next (new UnauthorizedError('invalid token'))
   }
@@ -157,7 +155,7 @@ export default {
   getAllUsers,
   getUser,
   createUser,
-  authenticateUser,
+  validateUser,
   updateUser,
   authenticateUser,
   deleteUser
