@@ -10,12 +10,12 @@ describe('EmailSender tests', () => {
   })
 
   it('Should send user e-mail even without all info', async () => {
-    const send = () => EmailSender.sendWelcomeEmail('pedroafabri@gmail.com')
+    const send = () => EmailSender.sendWelcomeEmail('lukbosquetti@gmail.com')
     expect(send).not.toThrow(Error)
   })
 
   it('Should send e-mail correctly', async () => {
-    const send = () => EmailSender.sendWelcomeEmail('pedroafabri@gmail.com', { firstName: 'Pedro', lastName: 'Fabri' })
+    const send = () => EmailSender.sendWelcomeEmail('lukbosquetti@gmail.com', { firstName: 'Lucas', lastName: 'Bosquetti' })
     expect(send).not.toThrow(Error)
   })
 })

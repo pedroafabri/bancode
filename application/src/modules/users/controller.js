@@ -63,11 +63,14 @@ export const createUser = async (req, res, next) => {
 // Authenticate user email
 export const authenticateUser = async (req, res, next) => {
 
-  const user = await UserService.getUserByEmail(req.body.email)
-  const token = await req.headers.authorization.replace('Bearer', '').trim()
-
   // checks if token is valid
   try{
+    const user = await UserService.getUserByEmail(req.body.email)
+
+    if(!user) return next (new UnauthorizedError('invalid email'))
+
+    const token = await req.headers.authorization.replace('Bearer', '').trim()
+
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET)
 
     // update user to verified
