@@ -8,38 +8,46 @@ const usertest = new UserTest()
 
 require('dotenv').config()
 
+// senha padrao para os testes
+const password = 'mamaco'
+
+// usuario verificado
+const verifiedUser = {
+  firstName: 'fernanda',
+  lastName: 'samecima',
+  email: 'samecima@yopmail.com',
+  cpf: '231.758.980-84',
+  password: encrypt(password),
+  balance: 0,
+  verified: true
+}
+
+// usuario padrao
+const defaultUser = {
+  firstName: 'matheus',
+  lastName: 'henrique',
+  cpf: '47744346807',
+  email: 'narval@yopmail.com',
+  password: encrypt(password),
+  balance: 0
+}
+
 describe('users test', () => {
   beforeAll(async () => {
     await connectDataBaseTest()
-    await UserModel.create({
-      firstName: 'fernanda',
-      lastName: 'samecima',
-      email: 'samecima@yopmail.com',
-      cpf: '231.758.980-84',
-      password: encrypt('mamaco'),
-      balance: 0,
-      verified: true
-    })
 
-    await UserModel.create({
-      firstName: 'matheus',
-      lastName: 'henrique',
-      cpf: '47744346807',
-      email: 'narval@yopmail.com',
-      password: encrypt('mamaco'),
-      balance: 0
-    }
-    )
+    await UserModel.create(verifiedUser)
+    await UserModel.create(defaultUser)
   })
 
   afterAll(async () => {
     await disconnectTestDataBase()
   })
 
-  it('should verifie if  the email was provided', async () => {
+  it('should verify if  the email was provided', async () => {
     const { body } = await usertest.verifyUser({
       email: '',
-      password: 'mamaco'
+      password: password
     })
 
     // expect(status).toBe(403)
@@ -48,7 +56,7 @@ describe('users test', () => {
 
   it('should verify if  the password was provided', async () => {
     const { body } = await usertest.verifyUser({
-      email: 'narval@yopmail.com',
+      email: defaultUser.email,
       password: ''
     })
 
@@ -58,8 +66,8 @@ describe('users test', () => {
 
   it('should verify if the user is not athenticated', async () => {
     const { status, body } = await usertest.verifyUser({
-      email: 'narval@yopmail.com',
-      password: 'mamaco'
+      email: defaultUser.email,
+      password: password
     })
 
     expect(status).toBe(403)
@@ -68,8 +76,8 @@ describe('users test', () => {
 
   it('should return 401', async () => {
     const { status, body } = await usertest.verifyUser({
-      email: 'narva@yopmail.com',
-      password: 'mamaco'
+      email: defaultUser.email,
+      password: 'mamac'
     })
 
     expect(status).toBe(401)
@@ -78,8 +86,8 @@ describe('users test', () => {
 
   it('should return 200', async () => {
     const { status } = await usertest.verifyUser({
-      email: 'samecima@yopmail.com',
-      password: 'mamaco'
+      email: verifiedUser.email,
+      password: password
     })
 
     expect(status).toBe(200)
