@@ -7,7 +7,7 @@ import passwordCheck from '../../helpers/passwordValidator'
 import { sendWelcomeEmail } from '../../helpers/emailSender'
 import { encrypt } from '../../helpers/encryptPassword'
 import { BadRequestError, ForbiddenError, UnauthorizedError } from 'restify-errors'
-import { sign } from '../../../src/helpers/token'
+import { sign, decode } from '../../../src/helpers/token'
 
 // GET all users JSON
 export const getAllUsers = async (req, res) => {
@@ -128,11 +128,19 @@ export const authenticateUser = async (req, res, next) => {
   res.json({ token: sign(user._id) })
 }
 
+export const transfer = async (req, res, next) => {
+  const userTransfer = req.body
+  if (!userTransfer.to) return next(new BadRequestError('to parameter not provided.'))
+  if (userTransfer.amount < 0.01) return next(new BadRequestError('transfers must be at least 0.01'))
+  // res.json('ok')
+}
+
 export default {
   getAllUsers,
   getUser,
   createUser,
   updateUser,
   authenticateUser,
-  deleteUser
+  deleteUser,
+  transfer
 }

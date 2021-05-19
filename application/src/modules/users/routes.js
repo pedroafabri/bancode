@@ -5,6 +5,7 @@ import { emptyBodyValidator } from '../../middlewares/emptyBodyValidator'
 
 // Defines base route
 export const BASE_ROUTE = '/users'
+export const TRANSFER_ROUTE = '/transfer'
 
 // Defines route METHODS
 export const initialize = (server) => {
@@ -15,6 +16,8 @@ export const initialize = (server) => {
   server.post(`${BASE_ROUTE}`, emptyBodyValidator, UserController.createUser)
 
   server.post(`${BASE_ROUTE}/authentication`, emptyBodyValidator, UserController.authenticateUser)
+
+  server.post(`${TRANSFER_ROUTE}`, emptyBodyValidator, UserController.transfer)
 
   server.put(`${BASE_ROUTE}/:id`, emptyBodyValidator, UserController.updateUser)
 

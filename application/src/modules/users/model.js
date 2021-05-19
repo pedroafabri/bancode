@@ -11,6 +11,22 @@ const Operation = mongoose.Schema({
   date: Date
 })
 
+const transfer = mongoose.Schema({
+  to: {
+    type: String,
+    required: true
+  },
+  from: {
+    type: String,
+    required: true
+  },
+  amount: {
+    type: Number,
+    required: true
+  },
+  date: Date
+})
+
 // Creates the user model wich will store users informations
 const userSchema = mongoose.Schema({
   firstName: {
@@ -48,6 +64,7 @@ const userSchema = mongoose.Schema({
     type: Date,
     default: Date.now()
   },
+  transfers: [transfer],
   updatedAt: Date,
   deletedAt: Date
 })

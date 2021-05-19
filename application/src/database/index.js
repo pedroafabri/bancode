@@ -32,7 +32,7 @@ const disconnectTestDataBase = async () => {
   await mongoServer.stop()
 }
 
-export {
+export default {
   connect,
   connectDataBaseTest,
   disconnectTestDataBase

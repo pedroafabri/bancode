@@ -77,7 +77,7 @@ describe('users test', () => {
   it('should return 401', async () => {
     const { status, body } = await usertest.verifyUser({
       email: defaultUser.email,
-      password: 'mamac'
+      password: password + 'a'
     })
 
     expect(status).toBe(401)
