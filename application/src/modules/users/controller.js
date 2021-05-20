@@ -150,7 +150,7 @@ export const transfer = async (req, res, next) => {
 
   if (!receiver) return next(new NotFoundError('user not found.'))
 
-  // if (!receiver.verified) return next(new UnauthorizedError('the receiver is not a verified user.'))
+  if (!receiver.verified) return next(new UnauthorizedError('the receiver is not a verified user.'))
 
   // creates an object using the transfer model
   const userTransaction = new UserTransfer({
