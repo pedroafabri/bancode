@@ -21,7 +21,7 @@ const transfer = mongoose.Schema({
     required: true
   },
   amount: {
-    type: Number,
+    type: String,
     required: true
   },
   date: Date
@@ -64,7 +64,9 @@ const userSchema = mongoose.Schema({
     type: Date,
     default: Date.now()
   },
-  transfers: [transfer],
+  transfers: {
+    type: Array
+  },
   updatedAt: Date,
   deletedAt: Date
 })
@@ -72,4 +74,9 @@ const userSchema = mongoose.Schema({
 // Exports the models functionality so it can be used by controller
 export const UserModel = mongoose.model('User', userSchema)
 
-export default UserModel
+export const UserTransfer = mongoose.model('transfer', transfer)
+
+export default {
+  UserModel,
+  UserTransfer
+}

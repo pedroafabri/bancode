@@ -1,5 +1,5 @@
 // Requires user model
-import UserModel from './model'
+import { UserModel } from './model'
 
 // Get all users
 export const getAllUsers = async () => UserModel.find({})
