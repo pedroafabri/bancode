@@ -4,9 +4,9 @@ import cpfCheck from '../../helpers/cpfValidator'
 import CPF from 'cpf-check'
 import emailCheck from '../../helpers/emailValidator'
 import passwordCheck from '../../helpers/passwordValidator'
-import { sendWelcomeEmail } from '../../helpers/emailSender'
+import { sendWelcomeEmail, sendPasswordRecoveryEmail } from '../../helpers/emailSender'
 import { encrypt } from '../../helpers/encryptPassword'
-import { BadRequestError } from 'restify-errors'
+import { BadRequestError, NotFoundError, UnauthorizedError } from 'restify-errors'
 
 // GET all users JSON
 export const getAllUsers = async (req, res) => {
@@ -90,20 +90,54 @@ export const updateUser = async (req, res, next) => {
     // Display updated user
     res.json(UserService.displayFormat(updatedUser))
   } catch (err) {
-    return next(err.message)
+    return next(err)
   }
 }
 
 // Deletes an user
 export const deleteUser = async (req, res, next) => {
   try {
+    await UserService.deleteUser(req.params.id)
     const deletedUser = await UserService.getUserById(req.params.id)
 
-    await UserService.deleteUser(req.params.id)
     // Display deleted user
     res.json(UserService.displayFormat(deletedUser))
   } catch (err) {
     return next(err)
+  }
+}
+
+export const recoveryPassword = async (req, res, next) => {
+  const { email } = req.body
+  if (!email) return next(new BadRequestError('Email field is empty.'))
+
+  const user = await UserService.getUserByEmail(email)
+  if (!user) return next(new NotFoundError('Email not registered.'))
+
+  const token = sign({ id: user._id })
+  try {
+    sendPasswordRecoveryEmail(user, token)
+
+    res('Email sent!')
+  } catch (err) {
+    return next(err)
+  }
+}
+
+export const changePassword = async (req, res, next) => {
+  try {
+    const { token } = req.params
+    const { sub } = verify(token)
+
+    const { password } = req.body
+    if (!password) return next(new BadRequestError('Password field is empty.'))
+
+    await UserService.updateUser(sub, { password })
+    const updatedUser = await UserService.getUserById(sub)
+
+    res.json(UserService.displayFormat(updatedUser))
+  } catch (err) {
+    return next(new UnauthorizedError('Invalid token'))
   }
 }
 
@@ -112,5 +146,7 @@ export default {
   getUser,
   createUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  recoveryPassword,
+  changePassword
 }
