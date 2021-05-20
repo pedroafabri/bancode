@@ -6,7 +6,7 @@ import emailCheck from '../../helpers/emailValidator'
 import passwordCheck from '../../helpers/passwordValidator'
 import { sendWelcomeEmail } from '../../helpers/emailSender'
 import { encrypt } from '../../helpers/encryptPassword'
-import { BadRequestError, ForbiddenError, NotAuthorizedError, NotFoundError, UnauthorizedError } from 'restify-errors'
+import { BadRequestError, ForbiddenError, UnauthorizedError } from 'restify-errors'
 import { sign } from '../../../src/helpers/token'
 
 // GET all users JSON
@@ -128,41 +128,11 @@ export const authenticateUser = async (req, res, next) => {
   res.json({ token: sign(user._id) })
 }
 
-export const transfer = async (req, res, next) => {
-  const userTransfer = req.body
-
-  if (!userTransfer.to) return next(new BadRequestError('to parameter not provided.'))
-  if (!userTransfer.amount || userTransfer.amount < 0.01) return next(new BadRequestError('transfers must be at least 0.01'))
-
-  const user = await UserService.getUserById(req.decodedToken.sub)
-
-  if (!user) return next(new BadRequestError('invalid token.'))
-
-  if (user.balance < userTransfer.amount) return next(new BadRequestError('not enough balance.'))
-
-  try {
-    const receiver = await UserService.getUserById(userTransfer.to)
-    const update = {
-      from: user._id,
-      to: receiver._id,
-      amount: userTransfer.amount,
-      date: Date.now()
-    }
-
-    user.transfer = Object.assign(update)
-
-    res.send(user)
-  } catch (error) {
-    return next(new NotFoundError('user not found.'))
-  }
-}
-
 export default {
   getAllUsers,
   getUser,
   createUser,
   updateUser,
   authenticateUser,
-  deleteUser,
-  transfer
+  deleteUser
 }
