@@ -7,7 +7,7 @@ import passwordCheck from '../../helpers/passwordValidator'
 import { sendWelcomeEmail, sendPasswordRecoveryEmail } from '../../helpers/emailSender'
 import { encrypt } from '../../helpers/encryptPassword'
 import { BadRequestError, NotFoundError, ForbiddenError, UnauthorizedError } from 'restify-errors'
-import { sign } from '../../../src/helpers/token'
+import { sign, verify } from '../../../src/helpers/token'
 
 // GET all users JSON
 export const getAllUsers = async (req, res) => {
@@ -117,9 +117,9 @@ export const recoveryPassword = async (req, res, next) => {
 
   const token = sign({ id: user._id })
   try {
-    sendPasswordRecoveryEmail(user, token)
+    await sendPasswordRecoveryEmail(user, token)
 
-    res('Email sent!')
+    res.send('Email sent!')
   } catch (err) {
     return next(err)
   }
