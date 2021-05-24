@@ -9,7 +9,6 @@ import { encrypt } from '../../helpers/encryptPassword'
 import { BadRequestError, ForbiddenError, UnauthorizedError } from 'restify-errors'
 import { sign, verify } from '../../../src/helpers/token'
 
-
 // GET all users JSON
 export const getAllUsers = async (req, res) => {
   const users = await UserService.getAllUsers()
@@ -63,12 +62,12 @@ export const createUser = async (req, res, next) => {
 
 // validate user email
 export const validateUser = async (req, res, next) => {
-  const{email, token} = req.body
+  const { email, token } = req.body
   // checks if token is valid
-  try{
+  try {
     const user = await UserService.getUserByEmail(email)
 
-    if(!user) return next (new UnauthorizedError('invalid email'))
+    if (!user) return next(new UnauthorizedError('invalid email'))
 
     verify(token)
 
@@ -78,10 +77,9 @@ export const validateUser = async (req, res, next) => {
 
     res.json('Email verified!')
   } catch (err) {
-    return next (new UnauthorizedError('invalid token'))
+    return next(new UnauthorizedError('invalid token'))
   }
 }
-
 
 // Updates an user
 export const updateUser = async (req, res, next) => {
