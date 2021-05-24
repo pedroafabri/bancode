@@ -12,6 +12,7 @@
     "start": "node build/index.js",
     "dev": "nodemon --exec babel-node src/index.js",
     "test": "jest --passWithNoTests",
+    "test:coverage": "jest --passWithNoTests --coverage",
     "standard": "standard 'src/**/*.js' | snazzy",
     "standard:fix": "standard --fix | snazzy",
     "jscpd": "jscpd --gitignore src/"
