@@ -18,6 +18,10 @@ export default class UserTest {
     return this._api.post('/users').send(user)
   }
 
+  validateUser (email, update) {
+    return this._api.post('/users/validate').send(email, update)
+  }
+
   updateUser (id, update) {
     return this._api.put(`/users/${id}`).send(update)
   }

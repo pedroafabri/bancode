@@ -7,7 +7,8 @@ import passwordCheck from '../../helpers/passwordValidator'
 import { sendWelcomeEmail } from '../../helpers/emailSender'
 import { encrypt } from '../../helpers/encryptPassword'
 import { BadRequestError, ForbiddenError, UnauthorizedError } from 'restify-errors'
-import { sign } from '../../../src/helpers/token'
+import { sign, verify } from '../../../src/helpers/token'
+
 
 // GET all users JSON
 export const getAllUsers = async (req, res) => {
@@ -48,8 +49,9 @@ export const createUser = async (req, res, next) => {
   if (email) return next(new BadRequestError('Email is already in use.'))
 
   // Try send email and then create user
+  const token = sign({ userId: user.id })
   try {
-    await sendWelcomeEmail(user.email, user)
+    await sendWelcomeEmail(user, token)
     const createdUser = await UserService.createUser(user)
 
     // Display created user
@@ -58,6 +60,28 @@ export const createUser = async (req, res, next) => {
     return next(err)
   }
 }
+
+// validate user email
+export const validateUser = async (req, res, next) => {
+  const{email, token} = req.body
+  // checks if token is valid
+  try{
+    const user = await UserService.getUserByEmail(email)
+
+    if(!user) return next (new UnauthorizedError('invalid email'))
+
+    verify(token)
+
+    // update user to verified
+    user.verified = true
+    user.save()
+
+    res.json('Email verified!')
+  } catch (err) {
+    return next (new UnauthorizedError('invalid token'))
+  }
+}
+
 
 // Updates an user
 export const updateUser = async (req, res, next) => {
@@ -131,6 +155,7 @@ export default {
   getAllUsers,
   getUser,
   createUser,
+  validateUser,
   updateUser,
   authenticateUser,
   deleteUser
