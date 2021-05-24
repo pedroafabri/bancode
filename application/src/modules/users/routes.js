@@ -21,9 +21,9 @@ export const initialize = (server) => {
 
   server.del(`${BASE_ROUTE}/:id`, UserController.deleteUser)
 
-  server.post(`${PASSWORD_RECOVERY_ROUTE}`, UserController.recoveryPassword)
+  server.post(`${PASSWORD_RECOVERY_ROUTE}`, UserController.recoverPassword)
 
-  server.post(`${PASSWORD_RECOVERY_ROUTE}/:token`, UserController.changePassword)
+  server.post(`${PASSWORD_RECOVERY_ROUTE}/change-password`, UserController.changePassword)
 }
 
 export default {

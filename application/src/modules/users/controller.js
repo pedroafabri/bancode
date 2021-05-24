@@ -108,9 +108,9 @@ export const deleteUser = async (req, res, next) => {
   }
 }
 
-export const recoveryPassword = async (req, res, next) => {
+export const recoverPassword = async (req, res, next) => {
   const { email } = req.body
-  if (!email) return next(new BadRequestError('Email field is empty.'))
+  if (!emailCheck.validate(email)) return next(new BadRequestError('Invalid email.'))
 
   const user = await UserService.getUserByEmail(email)
   if (!user) return next(new NotFoundError('Email not registered.'))
@@ -127,18 +127,17 @@ export const recoveryPassword = async (req, res, next) => {
 
 export const changePassword = async (req, res, next) => {
   try {
-    const { token } = req.params
+    const { token } = req.query
     const { sub } = verify(token)
 
     const { password } = req.body
-    if (!password) return next(new BadRequestError('Password field is empty.'))
+    if (!passwordCheck.validate(password)) return next(new BadRequestError('Invalid password.'))
 
-    await UserService.updateUser(sub, { password })
-    const updatedUser = await UserService.getUserById(sub)
+    await UserService.updateUser(sub, { password: encrypt(password) })
 
-    res.json(UserService.displayFormat(updatedUser))
+    res.send('Password changed!')
   } catch (err) {
-    return next(new UnauthorizedError('Invalid token'))
+    return next(err)
   }
 }
 
@@ -167,7 +166,7 @@ export default {
   createUser,
   updateUser,
   deleteUser,
-  recoveryPassword,
+  recoverPassword,
   changePassword,
   authenticateUser
 }

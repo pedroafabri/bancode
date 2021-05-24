@@ -30,11 +30,11 @@ export default class UserTest {
     return this._api.del(`${BASE_ROUTE}/${id}`)
   }
 
-  recoveryPassword (email) {
+  recoverPassword (email) {
     return this._api.post(`${PASSWORD_RECOVERY_ROUTE}`).send(email)
   }
 
   changePassword (token, newPassword) {
-    return this._api.post(`${PASSWORD_RECOVERY_ROUTE}/${token}`).send(newPassword)
+    return this._api.post(`${PASSWORD_RECOVERY_ROUTE}/change-password?token=${token}`).send(newPassword)
   }
 }
