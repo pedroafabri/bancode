@@ -15,6 +15,8 @@ export const initialize = (server) => {
 
   server.post(`${BASE_ROUTE}`, emptyBodyValidator, UserController.createUser)
 
+  server.post(`${BASE_ROUTE}/validate`, UserController.validateUser)
+
   server.post(`${BASE_ROUTE}/authentication`, emptyBodyValidator, UserController.authenticateUser)
 
   server.put(`${BASE_ROUTE}/:id`, emptyBodyValidator, UserController.updateUser)

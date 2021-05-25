@@ -22,6 +22,10 @@ export default class UserTest {
     return this._api.post(`${BASE_ROUTE}`).send(user)
   }
 
+  validateUser (email, update) {
+    return this._api.post('/users/validate').send(email, update)
+  }
+
   updateUser (id, update) {
     return this._api.put(`${BASE_ROUTE}/${id}`).send(update)
   }

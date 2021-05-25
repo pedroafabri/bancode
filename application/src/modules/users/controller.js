@@ -48,14 +48,36 @@ export const createUser = async (req, res, next) => {
   if (email) return next(new BadRequestError('Email is already in use.'))
 
   // Try send email and then create user
+  const token = sign({ userId: user.id })
   try {
-    await sendWelcomeEmail(user.email, user)
+    await sendWelcomeEmail(user, token)
     const createdUser = await UserService.createUser(user)
 
     // Display created user
     res.json(UserService.displayFormat(createdUser))
   } catch (err) {
     return next(err)
+  }
+}
+
+// validate user email
+export const validateUser = async (req, res, next) => {
+  const { email, token } = req.body
+  // checks if token is valid
+  try {
+    const user = await UserService.getUserByEmail(email)
+
+    if (!user) return next(new UnauthorizedError('invalid email'))
+
+    verify(token)
+
+    // update user to verified
+    user.verified = true
+    user.save()
+
+    res.json('Email verified!')
+  } catch (err) {
+    return next(new UnauthorizedError('invalid token'))
   }
 }
 
@@ -164,6 +186,7 @@ export default {
   getAllUsers,
   getUser,
   createUser,
+  validateUser,
   updateUser,
   deleteUser,
   recoverPassword,
