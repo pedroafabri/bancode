@@ -1,7 +1,9 @@
 import sgMail from '@sendgrid/mail'
 
 // get the new user req.body and sent the welcome email
-export const sendWelcomeEmail = async ({ email, firstName, lastName }, token) => {
+export const sendWelcomeEmail = async ({ email, firstName, lastName } = {}, token) => {
+  if (!email || !firstName || !lastName || !token) throw new Error('Invalid parameters provided.')
+
   // conect with the sendgrid api
   sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
@@ -23,7 +25,9 @@ export const sendWelcomeEmail = async ({ email, firstName, lastName }, token) =>
   console.log('Email sent')
 }
 
-export const sendPasswordRecoveryEmail = async ({ email, firstName, lastName }, token) => {
+export const sendPasswordRecoveryEmail = async ({ email, firstName, lastName } = {}, token) => {
+  if (!email || !firstName || !lastName || !token) throw new Error('Invalid parameters provided.')
+
   sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
   const message = {
