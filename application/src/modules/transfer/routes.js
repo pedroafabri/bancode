@@ -10,8 +10,17 @@ export const TRANSFER_ROUTE = '/transfer'
 // Defines route METHODS
 export const initialize = (server) => {
 
-    server.post(`${TRANSFER_ROUTE}`, emptyBodyValidator, jwtAuthenticator, TransferController.transfer)
+    server.post(`${TRANSFER_ROUTE}`, emptyBodyValidator, jwtAuthenticator, TransferController.makeTransfer)
 
+    server.get(`${TRANSFER_ROUTE}`, TransferController.getAllTransfers)
+
+    server.get(`${TRANSFER_ROUTE}/from/:id`, TransferController.getTransfersFrom)
+
+    server.get(`${TRANSFER_ROUTE}/to/:id`, TransferController.getTransfersTo)
+
+    server.get(`${TRANSFER_ROUTE}/amount`, TransferController.getTransfersAmount)
+
+    server.get(`${TRANSFER_ROUTE}/date`, TransferController.getTransfersDate)
 }
 
 export default {
