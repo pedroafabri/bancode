@@ -1,9 +1,9 @@
 /* globals jest describe it expect beforeAll beforeEach afterAll */
 
-import { jwtAuthenticator } from '../../src/middlewares/jwtAuthenticator'
-import { connectTestDatabase, disconnectTestDatabase } from '../../src/database'
-import { UserService, UserModel } from '../../src/modules/users'
-import { sign, verify } from '../../src/helpers/token'
+import { jwtAuthenticator } from '../../../src/middlewares/jwtAuthenticator'
+import { connectTestDatabase, disconnectTestDatabase } from '../../../src/database'
+import { UserService, UserModel } from '../../../src/modules/users'
+import { sign, verify } from '../../../src/helpers/token'
 import { UnauthorizedError } from 'restify-errors'
 
 require('dotenv').config()

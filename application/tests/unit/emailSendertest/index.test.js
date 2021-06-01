@@ -1,6 +1,6 @@
 /* globals describe it expect */
 
-import EmailSender from '../../src/helpers/emailSender'
+import EmailSender from '../../../src/helpers/emailSender'
 
 describe('EmailSender tests', () => {
   it('Should throw error when not passing user e-mail', async () => {

@@ -1,6 +1,6 @@
 /* globals describe beforeAll afterAll it expect */
 
-import { connectTestDatabase, disconnectTestDatabase } from '../../../src/database'
+import { connectTestDatabase, disconnectTestDatabase } from '../../../../src/database'
 import UserTest from './testRoutes'
 
 const userTest = new UserTest()

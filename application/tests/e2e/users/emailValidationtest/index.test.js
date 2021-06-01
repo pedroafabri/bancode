@@ -1,10 +1,10 @@
 /* globals beforeAll afterAll describe it expect */
 
-import { UserModel } from '../../../src/modules/users'
-import UserTest from './testRoutes'
-import { connectTestDatabase, disconnectTestDatabase } from '../../../src/database'
-import { encrypt } from '../../../src/helpers/encryptPassword'
-import { sign } from '../../../src/helpers/token'
+import { UserModel } from '../../../../src/modules/users'
+import UserTest from '../endpoint'
+import { connectTestDatabase, disconnectTestDatabase } from '../../../../src/database'
+import { encrypt } from '../../../../src/helpers/encryptPassword'
+import { sign } from '../../../../src/helpers/token'
 
 require('dotenv').config()
 
