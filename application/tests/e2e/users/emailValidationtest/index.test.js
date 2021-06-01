@@ -13,7 +13,7 @@ const usertest = new UserTest()
 let defaultUser
 let expiredUser
 
-describe('userAuthentication tests', () => {
+describe('emailValidation tests', () => {
   beforeAll(async () => {
     await connectTestDatabase()
     defaultUser = await UserModel.create({
