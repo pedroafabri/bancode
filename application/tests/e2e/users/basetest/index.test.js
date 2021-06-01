@@ -1,7 +1,7 @@
 /* globals describe beforeAll afterAll it expect */
 
 import { connectTestDatabase, disconnectTestDatabase } from '../../../../src/database'
-import UserTest from './testRoutes'
+import UserTest from '../endpoint'
 
 const userTest = new UserTest()
 

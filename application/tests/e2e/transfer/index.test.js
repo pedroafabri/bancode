@@ -1,11 +1,11 @@
 /* globals beforeAll afterAll describe it expect */
 
-import { UserModel } from '../../../../src/modules/users'
+import { UserModel } from '../../../src/modules/users'
 import { TransferModel } from '../../../src/modules/transfer'
 
-import TransferTest from '../endpoint'
-import { connectTestDatabase, disconnectTestDatabase } from '../../../../src/database'
-import { encrypt } from '../../../../src/helpers/encryptPassword'
+import TransferTest from './endpoint'
+import { connectTestDatabase, disconnectTestDatabase } from '../../../src/database'
+import { encrypt } from '../../../src/helpers/encryptPassword'
 
 require('dotenv').config()
 
@@ -37,6 +37,7 @@ describe('emailValidation tests', () => {
             password: encrypt('robalo'),
             balance: 100
         })
+        
         transferExample = await TransferModel.create({
             to: recieverUser.id,
             from: transferUser.id,
@@ -163,12 +164,11 @@ describe('emailValidation tests', () => {
     })
 
     it('should return error if there is no transfers in this date', async () => {
-        const date = 11/07/1962
+        const date = 11/7/1962
 
         const { body } = await transfertest.getTransfersDate(date)
 
         expect(body).toBe('there is no transfers in this date')
     })
 })
-
 
