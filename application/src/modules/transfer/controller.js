@@ -68,6 +68,8 @@ export const getTransfersFrom = async (req, res, next) => {
 
     res.json(TransferService.displayFormat(transfersfrom))
 
+    if(!transfersfrom) return next(new Error('there is no transfers from this id'))
+
   } catch (err) {
     next (err)
   }
@@ -80,6 +82,8 @@ export const getTransfersTo = async (req, res, next) => {
 
     res.json(TransferService.displayFormat(transfersto))
 
+    if(!transfersto) return next(new Error('there is no transfers to this id'))
+
   } catch (err) {
     next (err)
   }
@@ -91,7 +95,7 @@ export const getTransfersAmount = async (req, res, next) => {
   try{
     const transferamount = await TransferService.getTransfersAmount(amount >= MinAmount && amount <= MaxAmount)
 
-    if(!transferamount) return next(new Error('invalid amount range'))
+    if(!transferamount) return next(new Error('there is no transfers in this amount range'))
 
     res.json(TransferService.displayFormat(transferamount))
 
@@ -106,7 +110,7 @@ export const getTransfersDate = async (req, res, next) => {
   try {
     const transfersdate = await TransferService.getTransfersDate(date)
 
-    if(!transfersdate) return next(new Error('invalid Date'))
+    if(!transfersdate) return next(new Error('there is no transfers in this date'))
 
     res.json(TransferService.displayFormat(transfersdate))
 
