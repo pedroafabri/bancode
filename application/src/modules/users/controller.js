@@ -1,7 +1,6 @@
 // Requirements from service and npm packages
 import UserService from './service'
-import cpfCheck from '../../helpers/cpfValidator'
-import CPF from 'cpf-check'
+import CPF from '../../helpers/cpf'
 import emailCheck from '../../helpers/emailValidator'
 import passwordCheck from '../../helpers/passwordValidator'
 import { sendWelcomeEmail } from '../../helpers/emailSender'
@@ -33,8 +32,8 @@ export const createUser = async (req, res, next) => {
   const user = req.body
 
   // Check if user CPF is valid
-  if (!cpfCheck.validate(user.cpf)) return next(new BadRequestError('Invalid CPF.'))
-  user.cpf = CPF.format(user.cpf)
+  if (!CPF.validate(user.cpf)) return next(new BadRequestError('Invalid CPF.'))
+  user.cpf = CPF.strip(user.cpf)
 
   // Check if user password is valid
   if (!passwordCheck.validate(user.password)) return next(new BadRequestError('Invalid password.'))
@@ -87,8 +86,8 @@ export const updateUser = async (req, res, next) => {
 
   // Checks if CPF was updated and if it's valid
   if (update.cpf || update.cpf === '') {
-    if (!cpfCheck.validate(update.cpf)) return next(new BadRequestError('Invalid CPF.'))
-    update.cpf = CPF.format(update.cpf)
+    if (!CPF.validate(update.cpf)) return next(new BadRequestError('Invalid CPF.'))
+    update.cpf = CPF.strip(update.cpf)
   }
 
   // Checks if password was updated and if it's valid
