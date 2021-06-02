@@ -29,15 +29,14 @@ export const makeTransfer = async (req, res, next) => {
   if (!receiver.verified) return next(new UnauthorizedError('the receiver is not a verified user.'))
 
   // creates an object using the transfer model
-  const userTransaction = new TransferModel({
+  const transaction = {
     to: receiver._id,
     from: user._id,
-    amount: '-' + newTransfer.amount,
+    amount: newTransfer.amount,
     date: Date.now()
-  })
+  }
 
   // add the transaction in the transfers array and update the respective balances
-  user.transfers.push(userTransaction)
   user.balance = user.balance - newTransfer.amount
   receiver.balance = receiver.balance + newTransfer.amount
 
@@ -46,8 +45,10 @@ export const makeTransfer = async (req, res, next) => {
     await UserService.updateUser(user._id, user)
     await UserService.updateUser(receiver._id, receiver)
 
+    await TransferService.createTransfer(transaction)
+
     // returns the transaction if everything is ok
-    res.json(userTransaction)
+    res.json(transaction)
   } catch (error) {
     return next(error)
   }
@@ -56,9 +57,23 @@ export const makeTransfer = async (req, res, next) => {
 // Get all transfers Json
 export const getAllTransfers = async (req, res) => {
 
-  const transfers = await TransferService.getAllTransfers
+  const transfers = await TransferService.getAllTransfers()
 
   res.json(transfers)
+}
+
+// Get specific transfer by id
+export const getTransferId = async (req, res, next) => {
+  try {
+    const transferid = await TransferService.getTransferId(req.params.id)
+
+    res.json(TransferService.displayFormat(transferid))
+
+    if(transferid.length === 0) return next(new Error('this transfers does not exist'))
+
+  } catch (err) {
+    next (err)
+  }
 }
 
 // Get transfers from a specific id
@@ -66,9 +81,9 @@ export const getTransfersFrom = async (req, res, next) => {
   try {
     const transfersfrom = await TransferService.getTransfersFrom(req.params.id)
 
-    res.json(TransferService.displayFormat(transfersfrom))
+    res.json(transfersfrom)
 
-    if(!transfersfrom) return next(new Error('there is no transfers from this id'))
+    if(transfersfrom.length === 0) return next(new Error('there is no transfers from this id'))
 
   } catch (err) {
     next (err)
@@ -80,9 +95,9 @@ export const getTransfersTo = async (req, res, next) => {
   try {
     const transfersto = await TransferService.getTransfersTo(req.params.id)
 
-    res.json(TransferService.displayFormat(transfersto))
+    res.json((transfersto))
 
-    if(!transfersto) return next(new Error('there is no transfers to this id'))
+    if(transfersto.length === 0) return next(new Error('there is no transfers to this id'))
 
   } catch (err) {
     next (err)
@@ -93,11 +108,11 @@ export const getTransfersTo = async (req, res, next) => {
 export const getTransfersAmount = async (req, res, next) => {
   const {MinAmount, MaxAmount} = req.body
   try{
-    const transferamount = await TransferService.getTransfersAmount(amount >= MinAmount && amount <= MaxAmount)
+    const transferamount = await TransferService.getTransfersAmount( MinAmount, MaxAmount )
+    
+    if(transferamount.length === 0) return next(new Error('there is no transfers in this amount range'))
 
-    if(!transferamount) return next(new Error('there is no transfers in this amount range'))
-
-    res.json(TransferService.displayFormat(transferamount))
+    res.json(transferamount)
 
   } catch (err) {
     next (err)
@@ -110,9 +125,9 @@ export const getTransfersDate = async (req, res, next) => {
   try {
     const transfersdate = await TransferService.getTransfersDate(date)
 
-    if(!transfersdate) return next(new Error('there is no transfers in this date'))
+    if(!transfersdate.length === 0) return next(new Error('there is no transfers in this date'))
 
-    res.json(TransferService.displayFormat(transfersdate))
+    res.json(transfersdate)
 
   } catch (err) {
     next (err)
@@ -123,6 +138,7 @@ export const getTransfersDate = async (req, res, next) => {
 export default {
   makeTransfer,
   getAllTransfers,
+  getTransferId,
   getTransfersFrom,
   getTransfersTo,
   getTransfersAmount,

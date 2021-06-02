@@ -11,7 +11,7 @@ const transfer = mongoose.Schema({
     required: true
   },
   amount: {
-    type: String,
+    type: Number,
     required: true
   },
   date: Date
@@ -20,6 +20,4 @@ const transfer = mongoose.Schema({
 
 export const TransferModel = mongoose.model('transfer', transfer)
 
-export default {
-  TransferModel
-}
+export default TransferModel

@@ -14,6 +14,8 @@ export const initialize = (server) => {
 
     server.get(`${TRANSFER_ROUTE}`, TransferController.getAllTransfers)
 
+    server.get(`${TRANSFER_ROUTE}/:id`, TransferController.getTransferId)
+
     server.get(`${TRANSFER_ROUTE}/from/:id`, TransferController.getTransfersFrom)
 
     server.get(`${TRANSFER_ROUTE}/to/:id`, TransferController.getTransfersTo)

@@ -12,7 +12,7 @@ require('dotenv').config()
 const transfertest = new TransferTest()
 
 let transferUser
-let recieverUser
+let receiverUser
 let transferExample
 
 describe('emailValidation tests', () => {
@@ -28,7 +28,7 @@ describe('emailValidation tests', () => {
             balance: 1000
 
         })
-        recieverUser = await UserModel.create({
+        receiverUser = await UserModel.create({
             firstName: 'João',
             lastName: 'Bosquetti',
             cpf: '05567384890',
@@ -39,7 +39,7 @@ describe('emailValidation tests', () => {
         })
         
         transferExample = await TransferModel.create({
-            to: recieverUser.id,
+            to: receiverUser.id,
             from: transferUser.id,
             amount: 10,
             date: Date.now()
@@ -53,7 +53,7 @@ describe('emailValidation tests', () => {
 
     it('should make a transfer when everything is ok', async () => {
         const transfer = {
-            to: recieverUser.id,
+            to: receiverUser.id,
             from: transferUser.id,
             amount: 100
         }
@@ -75,7 +75,7 @@ describe('emailValidation tests', () => {
 
     it("should return error when transferUser hasn't enough balance", async () => {
         const transfer = {
-            to: recieverUser.id,
+            to: receiverUser.id,
             from: transferUser.id,
             amount: 100000
         }
@@ -86,7 +86,7 @@ describe('emailValidation tests', () => {
 
     it('should return error when amount is not provided', async () => {
         const transfer = {
-            to: recieverUser.id,
+            to: receiverUser.id,
             from: transferUser.id,
             amount: ""
         }
@@ -95,9 +95,9 @@ describe('emailValidation tests', () => {
         expect(body).toBe('transfers must be at least 0.01')
     })
 
-    it('should return error when recieverUser is not found', async () => {
+    it('should return error when receiverUser is not found', async () => {
         const transfer = {
-            to: recieverUser.id,
+            to: receiverUser.id,
             from: "",
             amount: 10
         }
@@ -119,13 +119,13 @@ describe('emailValidation tests', () => {
     })
 
     it('should return error if there is no transfers from this id', async () => {
-        const { body } = await transfertest.getTransfersFrom(recieverUser.id)
+        const { body } = await transfertest.getTransfersFrom(receiverUser.id)
 
         expect(body).toBe('there is no transfers from this id')
     })
 
     it("should return transfers from specific 'to'", async () => {
-        const response = await transfertest.getTransfersTo(recieverUser.id)
+        const response = await transfertest.getTransfersTo(receiverUser.id)
 
         expect(response.status).toBe(200)
     })

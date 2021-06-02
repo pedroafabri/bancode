@@ -1,14 +1,8 @@
-import TransferRoutes from './routes'
+export {default as TransferRoutes} from './routes'
 
-import TransferModel from './model'
+export {default as TransferModel} from './model'
 
-import TransferService from './service'
+export {default as TransferService} from './service'
 
-import TransferController from './controller'
+export {default as TransferController} from './controller'
 
-export {
-  TransferRoutes,
-  TransferModel,
-  TransferService,
-  TransferController
-}
