@@ -6,12 +6,14 @@ import { TransferModel } from '../../../src/modules/transfer'
 import TransferTest from './endpoint'
 import { connectTestDatabase, disconnectTestDatabase } from '../../../src/database'
 import { encrypt } from '../../../src/helpers/encryptPassword'
+import { sign } from '../../../src/helpers/token'
 
 require('dotenv').config()
 
 const transfertest = new TransferTest()
 
 let transferUser
+let token
 let receiverUser
 let transferExample
 
@@ -24,17 +26,20 @@ describe('emailValidation tests', () => {
             email: 'lukjedi@yopmail.com',
             cpf: '50320469816',
             verified: true,
-            password: encrypt('invincible'),
+            password: encrypt('Invincible@1'),
             balance: 1000
 
         })
+
+        token = sign({ id: transferUser._id})
+
         receiverUser = await UserModel.create({
             firstName: 'João',
             lastName: 'Bosquetti',
             cpf: '05567384890',
             email: 'jcbosquetti@yopmail.com',
             verified: true,
-            password: encrypt('robalo'),
+            password: encrypt('Robalo@1'),
             balance: 100
         })
         
@@ -50,14 +55,12 @@ describe('emailValidation tests', () => {
         await disconnectTestDatabase()
     })
 
-
     it('should make a transfer when everything is ok', async () => {
         const transfer = {
             to: receiverUser.id,
-            from: transferUser.id,
             amount: 100
         }
-        const response = await transfertest.makeTransfer(transfer)
+        const response = await transfertest.makeTransfer(transfer, token)
 
         expect(response.status).toBe(200)
     })
@@ -65,51 +68,59 @@ describe('emailValidation tests', () => {
     it('should return error when to parameter is no provided', async () => {
         const transfer = {
             to: "",
-            from: transferUser.id,
             amount: 100
         }
-        const { body } = await transfertest.makeTransfer(transfer)
+        const { body } = await transfertest.makeTransfer(transfer, token)
 
-        expect(body).toBe('to parameter not provided.')
+        expect(body.message).toBe('to parameter not provided.')
     })
 
     it("should return error when transferUser hasn't enough balance", async () => {
         const transfer = {
             to: receiverUser.id,
-            from: transferUser.id,
             amount: 100000
         }
-        const { body } = await transfertest.makeTransfer(transfer)
+        const { body } = await transfertest.makeTransfer(transfer, token)
 
-        expect(body).toBe('not enough balance.')
+        expect(body.message).toBe('not enough balance.')
     })
 
     it('should return error when amount is not provided', async () => {
         const transfer = {
             to: receiverUser.id,
-            from: transferUser.id,
             amount: ""
         }
-        const { body } = await transfertest.makeTransfer(transfer)
+        const { body } = await transfertest.makeTransfer(transfer, token)
 
-        expect(body).toBe('transfers must be at least 0.01')
+        expect(body.message).toBe('transfers must be at least 0.01')
     })
 
-    it('should return error when receiverUser is not found', async () => {
+    it('should return error when token is not valid', async () => {
         const transfer = {
             to: receiverUser.id,
-            from: "",
             amount: 10
         }
         const { body } = await transfertest.makeTransfer(transfer)
 
-        expect(body).toBe('user not found.')
+        expect(body.message).toBe('Invalid token.')
     })
 
     it('should return all transfers', async () => {
         const response = await transfertest.getAllTransfers()
 
         expect(response.status).toBe(200)
+    })
+
+    it('should return a specific transfer when it id is provided', async () => {
+        const response = await transfertest.getTransferId(transferExample.id)
+
+        expect(response.status).toBe(200)
+    })
+
+    it('should return error when there is no transfers with this id', async () => {
+        const { body } = await transfertest.getTransferId(transferUser.id)
+
+        expect(body.message).toBe('Error: this transfers does not exist')
     })
 
     it("should return transfers from specific 'from'", async () => {
@@ -121,7 +132,7 @@ describe('emailValidation tests', () => {
     it('should return error if there is no transfers from this id', async () => {
         const { body } = await transfertest.getTransfersFrom(receiverUser.id)
 
-        expect(body).toBe('there is no transfers from this id')
+        expect(body.message).toBe('Error: there is no transfers from this id')
     })
 
     it("should return transfers from specific 'to'", async () => {
@@ -133,7 +144,7 @@ describe('emailValidation tests', () => {
     it('should return error if there is no transfers to this id', async () => {
         const { body } = await transfertest.getTransfersTo(transferUser.id)
 
-        expect(body).toBe('there is no transfers to this id')
+        expect(body.message).toBe('Error: there is no transfers to this id')
     })
 
     it('should return transfers from specific amount', async () => {
@@ -153,22 +164,22 @@ describe('emailValidation tests', () => {
         }
         const { body } = await transfertest.getTransfersAmount(amount)
 
-        expect(body).toBe('there is no transfers in this amount range')
+        expect(body.message).toBe('Error: there is no transfers in this amount range')
     })
 
     it('should return transfers from specific date', async () => {
-        const date = Date.now()
-        const response = await transfertest.getTransfersDate(date)
+        const datetest = { date: transferExample.date }
+        const response = await transfertest.getTransfersDate(datetest)
 
         expect(response.status).toBe(200)
     })
 
     it('should return error if there is no transfers in this date', async () => {
-        const date = 11/7/1962
+        const date = '1962-07-11'
 
         const { body } = await transfertest.getTransfersDate(date)
 
-        expect(body).toBe('there is no transfers in this date')
+        expect(body.message).toBe('Error: there is no transfers in this date')
     })
 })
 

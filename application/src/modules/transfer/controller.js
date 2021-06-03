@@ -24,6 +24,9 @@ export const makeTransfer = async (req, res, next) => {
   // get the receiver by the id provided in the body
   const receiver = await UserService.getUserById(newTransfer.to)
 
+  // can't transfer money to yourself
+  if (user.id === receiver.id) return next(new UnauthorizedError('Cannot transfer money to your own account'))
+
   if (!receiver) return next(new NotFoundError('user not found.'))
 
   if (!receiver.verified) return next(new UnauthorizedError('the receiver is not a verified user.'))
@@ -67,9 +70,9 @@ export const getTransferId = async (req, res, next) => {
   try {
     const transferid = await TransferService.getTransferId(req.params.id)
 
-    res.json(TransferService.displayFormat(transferid))
+    if(!transferid) return next(new Error('this transfers does not exist'))
 
-    if(transferid.length === 0) return next(new Error('this transfers does not exist'))
+    res.json(TransferService.displayFormat(transferid))
 
   } catch (err) {
     next (err)
@@ -81,9 +84,9 @@ export const getTransfersFrom = async (req, res, next) => {
   try {
     const transfersfrom = await TransferService.getTransfersFrom(req.params.id)
 
-    res.json(transfersfrom)
-
     if(transfersfrom.length === 0) return next(new Error('there is no transfers from this id'))
+
+    res.json(transfersfrom)
 
   } catch (err) {
     next (err)
@@ -95,10 +98,10 @@ export const getTransfersTo = async (req, res, next) => {
   try {
     const transfersto = await TransferService.getTransfersTo(req.params.id)
 
-    res.json((transfersto))
-
     if(transfersto.length === 0) return next(new Error('there is no transfers to this id'))
 
+    res.json((transfersto))
+    
   } catch (err) {
     next (err)
   }
@@ -125,7 +128,7 @@ export const getTransfersDate = async (req, res, next) => {
   try {
     const transfersdate = await TransferService.getTransfersDate(date)
 
-    if(!transfersdate.length === 0) return next(new Error('there is no transfers in this date'))
+    if(transfersdate.length === 0) return next(new Error('there is no transfers in this date'))
 
     res.json(transfersdate)
 

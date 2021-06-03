@@ -21,7 +21,7 @@ describe('emailValidation tests', () => {
       lastName: 'Melo',
       email: 'lukjedi@yopmail.com',
       cpf: '50320469816',
-      password: encrypt('invincible'),
+      password: encrypt('Invincible@1'),
       balance: 0
     })
     expiredUser = await UserModel.create({
@@ -29,7 +29,7 @@ describe('emailValidation tests', () => {
       lastName: 'Bosquetti',
       cpf: '05567384890',
       email: 'jcbosquetti@yopmail.com',
-      password: encrypt('robalo'),
+      password: encrypt('Robalo@1'),
       balance: 0
     })
   })

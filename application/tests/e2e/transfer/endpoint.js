@@ -9,12 +9,16 @@ export default class TransferTest {
     this._api = request(Server.create().server)
   }
 
-  makeTransfer (transfer) {
-      return this._api.post(`${TRANSFER_ROUTE}`).send(transfer)
+  makeTransfer (transfer, token) {
+      return this._api.post(`${TRANSFER_ROUTE}`).set('Authorization', `Bearer ${token}` ).send(transfer)
   }
 
   getAllTransfers () {
       return this._api.get(`${TRANSFER_ROUTE}`)
+  }
+
+  getTransferId (id) {
+      return this._api.get(`${TRANSFER_ROUTE}/${id}`)
   }
 
   getTransfersFrom (id) {

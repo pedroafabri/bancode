@@ -14,7 +14,10 @@ const transfer = mongoose.Schema({
     type: Number,
     required: true
   },
-  date: Date
+  date: {
+    type: Date,
+    default: Date.now()
+  }
 })
 
 
