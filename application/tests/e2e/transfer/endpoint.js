@@ -10,30 +10,30 @@ export default class TransferTest {
   }
 
   makeTransfer (transfer, token) {
-      return this._api.post(`${TRANSFER_ROUTE}`).set('Authorization', `Bearer ${token}` ).send(transfer)
+    return this._api.post(`${TRANSFER_ROUTE}`).set('Authorization', `Bearer ${token}`).send(transfer)
   }
 
   getAllTransfers () {
-      return this._api.get(`${TRANSFER_ROUTE}`)
+    return this._api.get(`${TRANSFER_ROUTE}`)
   }
 
   getTransferId (id) {
-      return this._api.get(`${TRANSFER_ROUTE}/${id}`)
+    return this._api.get(`${TRANSFER_ROUTE}/${id}`)
   }
 
   getTransfersFrom (id) {
-      return this._api.get(`${TRANSFER_ROUTE}/from/${id}`)
+    return this._api.get(`${TRANSFER_ROUTE}/from/${id}`)
   }
 
   getTransfersTo (id) {
-      return this._api.get(`${TRANSFER_ROUTE}/to/${id}`)
+    return this._api.get(`${TRANSFER_ROUTE}/to/${id}`)
   }
 
   getTransfersAmount (MinAmount, MaxAmount) {
-      return this._api.get(`${TRANSFER_ROUTE}/amount`).send(MinAmount, MaxAmount)
+    return this._api.get(`${TRANSFER_ROUTE}/amount`).send(MinAmount, MaxAmount)
   }
 
   getTransfersDate (date) {
-      return this._api.get(`${TRANSFER_ROUTE}/date`).send(date)
+    return this._api.get(`${TRANSFER_ROUTE}/date`).send(date)
   }
 }

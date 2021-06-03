@@ -2,7 +2,6 @@
 import UserService from '../users/service'
 import TransferService from './service'
 import { BadRequestError, NotFoundError, UnauthorizedError } from 'restify-errors'
-import { TransferModel } from './model'
 
 // make a new transfer
 export const makeTransfer = async (req, res, next) => {
@@ -59,7 +58,6 @@ export const makeTransfer = async (req, res, next) => {
 
 // Get all transfers Json
 export const getAllTransfers = async (req, res) => {
-
   const transfers = await TransferService.getAllTransfers()
 
   res.json(transfers)
@@ -70,12 +68,11 @@ export const getTransferId = async (req, res, next) => {
   try {
     const transferid = await TransferService.getTransferId(req.params.id)
 
-    if(!transferid) return next(new Error('this transfers does not exist'))
+    if (!transferid) return next(new Error('this transfers does not exist'))
 
     res.json(TransferService.displayFormat(transferid))
-
   } catch (err) {
-    next (err)
+    next(err)
   }
 }
 
@@ -84,12 +81,11 @@ export const getTransfersFrom = async (req, res, next) => {
   try {
     const transfersfrom = await TransferService.getTransfersFrom(req.params.id)
 
-    if(transfersfrom.length === 0) return next(new Error('there is no transfers from this id'))
+    if (transfersfrom.length === 0) return next(new Error('there is no transfers from this id'))
 
     res.json(transfersfrom)
-
   } catch (err) {
-    next (err)
+    next(err)
   }
 }
 
@@ -98,45 +94,41 @@ export const getTransfersTo = async (req, res, next) => {
   try {
     const transfersto = await TransferService.getTransfersTo(req.params.id)
 
-    if(transfersto.length === 0) return next(new Error('there is no transfers to this id'))
+    if (transfersto.length === 0) return next(new Error('there is no transfers to this id'))
 
     res.json((transfersto))
-    
   } catch (err) {
-    next (err)
+    next(err)
   }
 }
 
 // Get transfers of a specific amount
 export const getTransfersAmount = async (req, res, next) => {
-  const {MinAmount, MaxAmount} = req.body
-  try{
-    const transferamount = await TransferService.getTransfersAmount( MinAmount, MaxAmount )
-    
-    if(transferamount.length === 0) return next(new Error('there is no transfers in this amount range'))
+  const { MinAmount, MaxAmount } = req.body
+  try {
+    const transferamount = await TransferService.getTransfersAmount(MinAmount, MaxAmount)
+
+    if (transferamount.length === 0) return next(new Error('there is no transfers in this amount range'))
 
     res.json(transferamount)
-
   } catch (err) {
-    next (err)
+    next(err)
   }
 }
 
 // Get transfers of a specific date
 export const getTransfersDate = async (req, res, next) => {
-  const {date} = req.body
+  const { date } = req.body
   try {
     const transfersdate = await TransferService.getTransfersDate(date)
 
-    if(transfersdate.length === 0) return next(new Error('there is no transfers in this date'))
+    if (transfersdate.length === 0) return next(new Error('there is no transfers in this date'))
 
     res.json(transfersdate)
-
   } catch (err) {
-    next (err)
+    next(err)
   }
 }
-
 
 export default {
   makeTransfer,

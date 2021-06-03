@@ -20,7 +20,6 @@ const transfer = mongoose.Schema({
   }
 })
 
-
 export const TransferModel = mongoose.model('transfer', transfer)
 
 export default TransferModel
