@@ -24,7 +24,7 @@ export const connectTestDatabase = async () => {
   mongoServer = new MongoMemoryServer()
 
   const uri = await mongoServer.getUri()
-  mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+  await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 }
 
 export const disconnectTestDatabase = async () => {

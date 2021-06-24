@@ -1,5 +1,5 @@
 export const validate = pass => {
-  if (pass !== '') return true
+  if (pass !== '' && pass !== undefined) return true
 }
 
 export default {

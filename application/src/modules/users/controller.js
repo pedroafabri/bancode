@@ -4,9 +4,9 @@ import cpfCheck from '../../helpers/cpfValidator'
 import CPF from 'cpf-check'
 import emailCheck from '../../helpers/emailValidator'
 import passwordCheck from '../../helpers/passwordValidator'
-import { sendWelcomeEmail } from '../../helpers/emailSender'
+import { sendWelcomeEmail, sendPasswordRecoveryEmail } from '../../helpers/emailSender'
 import { encrypt } from '../../helpers/encryptPassword'
-import { BadRequestError, ForbiddenError, UnauthorizedError } from 'restify-errors'
+import { BadRequestError, NotFoundError, ForbiddenError, UnauthorizedError } from 'restify-errors'
 import { sign, verify } from '../../../src/helpers/token'
 
 // GET all users JSON
@@ -113,18 +113,51 @@ export const updateUser = async (req, res, next) => {
     // Display updated user
     res.json(UserService.displayFormat(updatedUser))
   } catch (err) {
-    return next(err.message)
+    return next(err)
   }
 }
 
 // Deletes an user
 export const deleteUser = async (req, res, next) => {
   try {
+    await UserService.deleteUser(req.params.id)
     const deletedUser = await UserService.getUserById(req.params.id)
 
-    await UserService.deleteUser(req.params.id)
     // Display deleted user
     res.json(UserService.displayFormat(deletedUser))
+  } catch (err) {
+    return next(err)
+  }
+}
+
+export const recoverPassword = async (req, res, next) => {
+  const { email } = req.body
+  if (!emailCheck.validate(email)) return next(new BadRequestError('Invalid email.'))
+
+  const user = await UserService.getUserByEmail(email)
+  if (!user) return next(new NotFoundError('Email not registered.'))
+
+  const token = sign({ id: user._id })
+  try {
+    await sendPasswordRecoveryEmail(user, token)
+
+    res.send('Email sent!')
+  } catch (err) {
+    return next(err)
+  }
+}
+
+export const changePassword = async (req, res, next) => {
+  try {
+    const { token } = req.query
+    const { sub } = verify(token)
+
+    const { password } = req.body
+    if (!passwordCheck.validate(password)) return next(new BadRequestError('Invalid password.'))
+
+    await UserService.updateUser(sub, { password: encrypt(password) })
+
+    res.send('Password changed!')
   } catch (err) {
     return next(err)
   }
@@ -155,6 +188,8 @@ export default {
   createUser,
   validateUser,
   updateUser,
-  authenticateUser,
-  deleteUser
+  deleteUser,
+  recoverPassword,
+  changePassword,
+  authenticateUser
 }

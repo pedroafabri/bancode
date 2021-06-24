@@ -5,6 +5,7 @@ import { emptyBodyValidator } from '../../middlewares/emptyBodyValidator'
 
 // Defines base route
 export const BASE_ROUTE = '/users'
+export const PASSWORD_RECOVERY_ROUTE = `${BASE_ROUTE}/password-recovery`
 
 // Defines route METHODS
 export const initialize = (server) => {
@@ -21,9 +22,14 @@ export const initialize = (server) => {
   server.put(`${BASE_ROUTE}/:id`, emptyBodyValidator, UserController.updateUser)
 
   server.del(`${BASE_ROUTE}/:id`, UserController.deleteUser)
+
+  server.post(`${PASSWORD_RECOVERY_ROUTE}`, UserController.recoverPassword)
+
+  server.post(`${PASSWORD_RECOVERY_ROUTE}/change-password`, UserController.changePassword)
 }
 
 export default {
   BASE_ROUTE,
+  PASSWORD_RECOVERY_ROUTE,
   initialize
 }
