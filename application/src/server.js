@@ -4,6 +4,7 @@ import Routes from './routes'
 const create = () => {
   const server = restify.createServer()
   server.use(restify.plugins.jsonBodyParser())
+  server.use(restify.plugins.queryParser())
 
   // Initialize every route
   for (const route of Routes) {
