@@ -3,6 +3,8 @@
 import { connectTestDatabase, disconnectTestDatabase } from '../../../../src/database'
 import UserTest from '../endpoint'
 
+require('dotenv').config()
+
 const userTest = new UserTest()
 
 describe('users test', () => {
