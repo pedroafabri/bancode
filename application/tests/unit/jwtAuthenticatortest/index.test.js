@@ -1,9 +1,9 @@
 /* globals jest describe it expect beforeAll beforeEach afterAll */
 
-import { jwtAuthenticator } from '../../src/middlewares/jwtAuthenticator'
-import { connectTestDatabase, disconnectTestDatabase } from '../../src/database'
-import { UserService, UserModel } from '../../src/modules/users'
-import { sign, verify } from '../../src/helpers/token'
+import { jwtAuthenticator } from '../../../src/middlewares/jwtAuthenticator'
+import { connectTestDatabase, disconnectTestDatabase } from '../../../src/database'
+import { UserService, UserModel } from '../../../src/modules/users'
+import { sign, verify } from '../../../src/helpers/token'
 import { UnauthorizedError } from 'restify-errors'
 
 require('dotenv').config()
@@ -25,7 +25,7 @@ describe('jwtAuthenticator tests', () => {
       lastName: 'teste',
       email: 'ideal@teste.com',
       cpf: '531.214.290-51',
-      password: 'senhateste',
+      password: 'Senhateste@1',
       verified: true
     })
   })
@@ -57,7 +57,7 @@ describe('jwtAuthenticator tests', () => {
       lastName: 'teste',
       email: 'unverified@teste.com',
       cpf: '528.830.000-34',
-      password: 'senhateste'
+      password: 'Senhateste@1'
     })
 
     req.headers.authorization = sign({ id: unverifiedUser._id })
@@ -74,7 +74,7 @@ describe('jwtAuthenticator tests', () => {
       lastName: 'teste',
       email: 'inactive@teste.com',
       cpf: '401.350.320-40',
-      password: 'senhateste'
+      password: 'Senhateste@1'
     })
 
     req.headers.authorization = sign({ id: inactiveUser._id })

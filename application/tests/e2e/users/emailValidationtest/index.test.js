@@ -1,10 +1,10 @@
 /* globals beforeAll afterAll describe it expect */
 
-import { UserModel } from '../../../src/modules/users'
-import UserTest from './testRoutes'
-import { connectTestDatabase, disconnectTestDatabase } from '../../../src/database'
-import { encrypt } from '../../../src/helpers/encryptPassword'
-import { sign } from '../../../src/helpers/token'
+import { UserModel } from '../../../../src/modules/users'
+import UserTest from '../endpoint'
+import { connectTestDatabase, disconnectTestDatabase } from '../../../../src/database'
+import { encrypt } from '../../../../src/helpers/encryptPassword'
+import { sign } from '../../../../src/helpers/token'
 
 require('dotenv').config()
 
@@ -13,7 +13,7 @@ const usertest = new UserTest()
 let defaultUser
 let expiredUser
 
-describe('userAuthentication tests', () => {
+describe('emailValidation tests', () => {
   beforeAll(async () => {
     await connectTestDatabase()
     defaultUser = await UserModel.create({
@@ -21,7 +21,7 @@ describe('userAuthentication tests', () => {
       lastName: 'Melo',
       email: 'lukjedi@yopmail.com',
       cpf: '50320469816',
-      password: encrypt('invincible'),
+      password: encrypt('Invincible@1'),
       balance: 0
     })
     expiredUser = await UserModel.create({
@@ -29,7 +29,7 @@ describe('userAuthentication tests', () => {
       lastName: 'Bosquetti',
       cpf: '05567384890',
       email: 'jcbosquetti@yopmail.com',
-      password: encrypt('robalo'),
+      password: encrypt('Robalo@1'),
       balance: 0
     })
   })

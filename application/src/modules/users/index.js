@@ -1,15 +1,8 @@
 // Requires METHODS routes
-import UserRoutes from './routes'
+export { default as UserRoutes } from './routes'
 
-import UserModel from './model'
+export { default as UserModel } from './model'
 
-import UserService from './service'
+export { default as UserService } from './service'
 
-import UserController from './controller'
-
-export {
-  UserRoutes,
-  UserModel,
-  UserService,
-  UserController
-}
+export { default as UserController } from './controller'
